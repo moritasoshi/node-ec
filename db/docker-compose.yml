@@ -1,0 +1,26 @@
+version: "3"
+services:
+  mongod001:
+    container_name: mongors001
+    image: mongo:4.2.11
+    command: mongod --replSet rs1
+    ports:
+      - "30001:27017"
+  mongod002:
+    container_name: mongors002
+    image: mongo:4.2.11
+    command: mongod --replSet rs1
+    ports:
+      - "30002:27017"
+  mongod003:
+    container_name: mongors003
+    image: mongo:4.2.11
+    command: mongod --replSet rs1
+    ports:
+      - "30003:27017"
+  mongoa001:
+    container_name: mongoa001
+    image: mongo:4.2.11
+    command: mongod --replSet rs1
+    ports:
+      - "30004:27017"
