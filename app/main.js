@@ -1,15 +1,16 @@
 'use strict';
 
-const express = require('express');
+const express = require('express'),
+	// layouts = require("express-ejs-layouts"),
+	router = require("./routes/index"),
+	PORT = 3000,
+	app = express();
 
-// Constants
-const PORT = 3000;
+app.use("/", router);
 
-// App
-const app = express();
 app.get('/', (req, res) => {
 	res.send('Hello World');
 });
 
 app.listen(PORT);
-console.log(`Running on port ${PORT}.`);
+console.log(`Server running at http://localhost:${PORT}`);
