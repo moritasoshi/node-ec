@@ -1,10 +1,14 @@
 'use strict';
 
 const express = require('express'),
-	// layouts = require("express-ejs-layouts"),
+	layouts = require("express-ejs-layouts"),
 	router = require("./routes/index"),
 	PORT = 3000,
 	app = express();
+
+app.set('view engine', 'ejs');
+app.use(layouts);
+app.use(express.static('public'));
 
 app.use("/", router);
 
