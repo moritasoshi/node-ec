@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ユーザー登録</title>
+</head>
+
+<body>
+
+<main role="main" class="container">
+
+    <div class="border-bottom mt-5 mb-5">
+        <h1>ユーザー登録</h1>
+    </div>
+    <form method="post" action="/account/register/confirm">
+        <%
+        var errors = locals.errors || {};
+        var original = locals.original || {};
+        %>
+        <% if (locals.errors) { %>
+            <div class="alert alert-danger">
+                <% for (var key in errors) { %>
+                    <div><i class="fa fa-exclamation-circle fa-fw mr-2"></i><%= errors[key] %></div>
+                <% } %>
+            </div>
+        <% } %>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input type="text" class="form-control <%= errors.firstName ? 'is-invalid' : '' %>" id="firstName" name="firstName"
+                       value="<%= original.firstName %>" placeholder="姓"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input type="text" class="form-control <%= errors.lastName ? 'is-invalid' : '' %>" id="lastName" name="lastName"
+                       value="<%= original.lastName %>" placeholder="名"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input type="text" class="form-control <%= errors.email ? 'is-invalid' : '' %>" id="email" name="email"
+                       value="<%= original.email %>" placeholder="メールアドレス"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input type="password" class="form-control <%= errors.password ? 'is-invalid' : '' %>" id="password" name="password"
+                       value="<%= original.password %>" placeholder="パスワード"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <input type="submit" class="btn btn-primary" value="アカウントを作成"/>
+            </div>
+        </div>
+    </form>
+
+</main>
+
+</body>
+
+</html>
