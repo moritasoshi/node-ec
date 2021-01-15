@@ -1,7 +1,6 @@
 "use strict";
 
 const User = require("../models/user"),
-	passport = require("passport"),
 	getUserParams = body => {
 		return {
 			firstName: body.firstName,
@@ -25,5 +24,9 @@ module.exports = {
 	},
 	toLogin: (req, res) => {
 		res.render("./account/login.ejs");
+	},
+	logout: (req, res) => {
+		req.session.passport.user = undefined;
+		res.redirect('/');
 	}
 }
