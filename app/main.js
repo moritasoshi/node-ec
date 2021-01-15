@@ -85,6 +85,7 @@ app.post('/account/login',
 
 // ルーティング
 app.use("/", router);
+app.use("/item", router);
 app.get('/', (req, res) => {
 	if (!req.session.passport || !req.session.passport.user) {
 		console.log("login user : none")
