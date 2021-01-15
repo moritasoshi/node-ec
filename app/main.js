@@ -9,7 +9,14 @@ const express = require('express'),
 	app = express();
 
 // DB
-mongoose.connect('mongodb://localhost:30001/nodec', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose
+	// .connect('mongodb://localhost:30001,localhost:30002,localhost:30003/nodec?replicaSet=rs0', {
+	.connect('mongodb://localhost/nodec', {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => console.log('Database Connected'))
+	.catch(err => console.log(err));
 
 // テンプレートエンジン
 app.set('view engine', 'ejs');
