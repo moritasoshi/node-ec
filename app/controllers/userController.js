@@ -51,5 +51,9 @@ module.exports = {
 	},
 	toLogin: (req, res) => {
 		res.render("./account/login.ejs");
+	},
+	logout: (req, res) => {
+		req.session.passport.user = undefined;
+		res.redirect('/');
 	}
 }
