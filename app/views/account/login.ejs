@@ -11,6 +11,11 @@
 <main role="main" class="container">
 
     <form action="/account/login" method="post">
+        <% if(message.length !== 0){ %>
+            <div class="alert alert-danger">
+                <small><%= message %></small>
+            </div>
+        <% } %>
         <div>
             <label>メールアドレス：</label>
             <input type="text" name="email"/>
