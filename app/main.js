@@ -73,7 +73,6 @@ passport.deserializeUser((user, done) => {
 	done(null, user);
 });
 
-
 app.post('/account/login',
 	passport.authenticate('local', {
 		failureRedirect: "/account/login",
@@ -82,6 +81,11 @@ app.post('/account/login',
 		// successFlash: "Logged in!"
 	})
 );
+
+app.use(function (req, res, next) {
+	res.locals.user = req.session.passport ? req.session.passport.user : "";
+	next();
+});
 
 // ルーティング
 app.use("/", router);
@@ -93,7 +97,7 @@ app.get('/', (req, res) => {
 		console.log("login user : " + req.session.passport.user.email)
 	}
 	console.log(req.session);
-	res.render("./sample.ejs", {user: req.user});
+	res.render("./sample.ejs");
 });
 
 // サーバー
