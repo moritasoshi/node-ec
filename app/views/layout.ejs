@@ -15,6 +15,9 @@
         <h1 id="title">Book Mode</h1>
     </div>
     <div class="col-sm nav-align">
+        <% if (user) { %>
+            <%= user.email %>
+        <% } %>
         <a href="/">
             <span class="button">Home</span>
         </a>

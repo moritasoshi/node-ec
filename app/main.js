@@ -21,7 +21,7 @@ mongoose
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
-	.then(() => console.log('Database Connected'))
+	.then(() => console.log('Database Connected...'))
 	.catch(err => console.log(err));
 
 // テンプレートエンジン
@@ -45,11 +45,9 @@ passport.use(new LocalStrategy({
 				return done(err);
 			}
 			if (!user) {
-				console.log("ユーザーIDが正しくありません")
-				return done(null, false, {message: 'ユーザーIDが正しくありません。'});
+				return done(null, false, {message: 'メールアドレスが登録されていません。'});
 			}
 			if (user.password !== password) {
-				console.log("パスワードが正しくありません")
 				return done(null, false, {message: 'パスワードが正しくありません。'});
 			}
 			return done(null, user);
@@ -73,27 +71,24 @@ passport.deserializeUser((user, done) => {
 	done(null, user);
 });
 
-
 app.post('/account/login',
 	passport.authenticate('local', {
 		failureRedirect: "/account/login",
 		failureFlash: true,
 		successRedirect: "/",
-		// successFlash: "Logged in!"
 	})
 );
+
+app.use(function (req, res, next) {
+	res.locals.user = req.session.passport ? req.session.passport.user : "";
+	next();
+});
 
 // ルーティング
 app.use("/", router);
 //app.use("/item", router);
 app.get('/', (req, res) => {
-	if (!req.session.passport || !req.session.passport.user) {
-		console.log("login user : none")
-	} else {
-		console.log("login user : " + req.session.passport.user.email)
-	}
-	console.log(req.session);
-	res.render("./sample.ejs", {user: req.user});
+	res.render("./sample.ejs");
 });
 
 // サーバー

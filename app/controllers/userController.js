@@ -50,8 +50,17 @@ module.exports = {
 			})
 	},
 	toLogin: (req, res) => {
-		res.render("./account/login.ejs");
+		const flash = req.flash('error')
+		const message = {
+			message: flash
+		}
+		res.render("./account/login.ejs", message);
 	},
+	login: passport.authenticate('local', {
+		failureRedirect: "/account/login",
+		failureFlash: true,
+		successRedirect: "/",
+	}),
 	logout: (req, res) => {
 		req.session.passport.user = undefined;
 		res.redirect('/');
