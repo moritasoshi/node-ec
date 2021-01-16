@@ -14,40 +14,72 @@
     <div class="border-bottom mt-5 mb-5">
         <h1>ユーザー登録</h1>
     </div>
+
+    <% var ers = locals.errors || []; %>
+    <% var org = locals.original || {}; %>
+
     <form method="post" action="/account/register">
-        <%
-        var errors = locals.errors || {};
-        var original = locals.original || {};
-        %>
-        <% if (locals.errors) { %>
-            <div class="alert alert-danger">
-                <% for (var key in errors) { %>
-                    <div><i class="fa fa-exclamation-circle fa-fw mr-2"></i><%= errors[key] %></div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="firstName"
+                       name="firstName"
+                       value="<%= org.firstName %>" placeholder="姓"/>
+                <% if (ers.length !== 0) { %>
+                    <% ers.forEach(function (value) { %>
+                        <% if (value.param === "firstName") { %>
+                            <div class="alert alert-danger">
+                                <small><%= value.msg %></small>
+                            </div>
+                        <% } %>
+                    <% }); %>
                 <% } %>
             </div>
-        <% } %>
+        </div>
         <div class="form-group row">
             <div class="col-sm-10">
-                <input type="text" class="form-control <%= errors.firstName ? 'is-invalid' : '' %>" id="firstName" name="firstName"
-                       value="<%= original.firstName %>" placeholder="姓"/>
+                <input type="text" class="form-control" id="lastName"
+                       name="lastName"
+                       value="<%= org.lastName %>" placeholder="名"/>
+                <% if (ers.length !== 0) { %>
+                    <% ers.forEach(function (value) { %>
+                        <% if (value.param === "lastName") { %>
+                            <div class="alert alert-danger">
+                                <small><%= value.msg %></small>
+                            </div>
+                        <% } %>
+                    <% }); %>
+                <% } %>
             </div>
         </div>
         <div class="form-group row">
             <div class="col-sm-10">
-                <input type="text" class="form-control <%= errors.lastName ? 'is-invalid' : '' %>" id="lastName" name="lastName"
-                       value="<%= original.lastName %>" placeholder="名"/>
+                <input type="text" class="form-control" id="email" name="email"
+                       value="<%= org.email %>" placeholder="メールアドレス"/>
+                <% if (ers.length !== 0) { %>
+                    <% ers.forEach(function (value) { %>
+                        <% if (value.param === "email") { %>
+                            <div class="alert alert-danger">
+                                <small><%= value.msg %></small>
+                            </div>
+                        <% } %>
+                    <% }); %>
+                <% } %>
             </div>
         </div>
         <div class="form-group row">
             <div class="col-sm-10">
-                <input type="text" class="form-control <%= errors.email ? 'is-invalid' : '' %>" id="email" name="email"
-                       value="<%= original.email %>" placeholder="メールアドレス"/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-10">
-                <input type="password" class="form-control <%= errors.password ? 'is-invalid' : '' %>" id="password" name="password"
-                       value="<%= original.password %>" placeholder="パスワード"/>
+                <input type="password" class="form-control" id="password"
+                       name="password"
+                       value="<%= org.password %>" placeholder="パスワード"/>
+                <% if (ers.length !== 0) { %>
+                    <% ers.forEach(function (value) { %>
+                        <% if (value.param === "password") { %>
+                            <div class="alert alert-danger">
+                                <small><%= value.msg %></small>
+                            </div>
+                        <% } %>
+                    <% }); %>
+                <% } %>
             </div>
         </div>
         <div class="form-group row">
