@@ -19,17 +19,9 @@ const User = new Schema(
 			lowercase: true,
 			unique: true
 		},
-		zipCode: {
-			type: Number,
-			min: [10000, "Zip code too short"],
-			max: 9999999
-		},
 		password: {
 			type: String,
 			required: true
-		},
-		telephone: {
-			type: Number,
 		},
 		address: [{type: Schema.Types.ObjectId, ref: "Address"}]
 	},
