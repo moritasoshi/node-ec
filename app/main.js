@@ -9,6 +9,7 @@ const express = require('express'),
 	LocalStrategy = require('passport-local').Strategy,
 	session = require('express-session'),
 	flash = require('connect-flash'),
+	bcrypt = require('bcrypt'),
 	User = require("./models/user"),
 	PORT = 3000,
 	app = express();
@@ -47,7 +48,7 @@ passport.use(new LocalStrategy({
 			if (!user) {
 				return done(null, false, {message: 'メールアドレスが登録されていません。'});
 			}
-			if (user.password !== password) {
+			if (!bcrypt.compareSync(password, user.password)) {
 				return done(null, false, {message: 'パスワードが正しくありません。'});
 			}
 			return done(null, user);

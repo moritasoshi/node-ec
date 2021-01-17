@@ -10,14 +10,15 @@
   "author": "morita soshi",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
     "express": "^4.17.1",
     "express-ejs-layouts": "^2.5.0",
+    "express-session": "^1.17.1",
     "express-validator": "^6.9.2",
     "mongoose": "^5.11.12",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0",
-    "connect-flash": "^0.1.1",
-    "express-session": "^1.17.1"
+    "passport-local": "^1.0.0"
   }
 }
