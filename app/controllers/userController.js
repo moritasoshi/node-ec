@@ -3,6 +3,7 @@
 const User = require("../models/user"),
 	passport = require("passport"),
 	{validationResult} = require('express-validator'),
+	bcrypt = require('bcrypt'),
 	getUserParams = body => {
 		return {
 			firstName: body.firstName,
@@ -19,6 +20,7 @@ module.exports = {
 	},
 	register: (req, res, next) => {
 		const newUser = new User(getUserParams(req.body));
+		newUser.password = bcrypt.hashSync(newUser.password, 10);
 		const locals = {
 			errors: validationResult(req).errors,
 			original: req.body
