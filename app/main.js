@@ -29,15 +29,11 @@ mongoose
 // テンプレートエンジン
 app.set('view engine', 'ejs');
 app.use(layouts);
-app.use(bodyParser.urlencoded({
-	extended: true
-}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// 認証
-app.use(passport.initialize());
-app.use(flash());
+// 認証&セッション管理
 passport.use(new LocalStrategy({
 		usernameField: 'email',
 	},
@@ -57,12 +53,14 @@ passport.use(new LocalStrategy({
 	}
 ));
 
-// セッション管理
 app.use(session({
 	secret: 'keyboard cat',
 	resave: true,
 	saveUninitialized: false,
 }));
+app.use(passport.initialize());
+app.use(flash());
+app.use(passport.session());
 passport.serializeUser((user, done) => {
 	console.log('Serialize ...');
 	done(null, user);
@@ -73,16 +71,8 @@ passport.deserializeUser((user, done) => {
 	done(null, user);
 });
 
-app.post('/account/login',
-	passport.authenticate('local', {
-		failureRedirect: "/account/login",
-		failureFlash: true,
-		successRedirect: "/",
-	})
-);
-
 app.use(function (req, res, next) {
-	res.locals.user = req.session.passport ? req.session.passport.user : "";
+	res.locals.user = req['user'];
 	next();
 });
 
