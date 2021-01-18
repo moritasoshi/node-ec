@@ -19,7 +19,18 @@ const Address = require("../models/address"),
 
 module.exports = {
 	show: (req, res) => {
-		res.render('./address/show.ejs');
+		const loginUser = req.session.passport.user;
+		User.findOne({_id: loginUser._id})
+			.populate("address")
+			.populate("defaultAddress")
+			.exec()
+			.then(data => {
+				console.log(data)
+				res.render('./address/show.ejs', {address: data.address, defaultAddress: data.defaultAddress});
+			})
+			.catch(err => {
+				console.error(err)
+			})
 	},
 	toRegister: (req, res) => {
 		res.render('./address/register.ejs');
