@@ -1,3 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
 <body>
-    address created.
+
+<main role="main" class="container">
+
+    <% var address = address || []; %>
+    <% var defaultAddress = defaultAddress || {}; %>
+
+    <div class="border-bottom mt-5 mb-5">
+        <h1>私のアカウント</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <a href="/account">アカウントの詳細に戻る</a>
+        </div>
+        <div class="col-sm-6">
+            <div class="border-bottom">
+                <h3><%= defaultAddress.firstName %> <%= defaultAddress.lastName %></h3>
+                <p>(デフォルト)</p>
+                <p>〒<%= defaultAddress.zipCode %></p>
+                <p><%= defaultAddress.address %></p>
+                <p>電話番号:<%= defaultAddress.telephone %></p>
+                <p>
+                    <a href="/address/edit?_id=<%= defaultAddress._id %>">編集</a> |
+                    <a href="/address/delete?_id=<%= defaultAddress._id %>">削除</a>
+                </p>
+            </div>
+            <% for (var item of address) { %>
+                <div class="border-bottom">
+                    <p><%= item.firstName %><%= item.lastName %></p>
+                    <p>〒<%= item.zipCode %></p>
+                    <p><%= item.address %></p>
+                    <p>電話番号:<%= item.telephone %></p>
+                </div>
+                <p>
+                    <a href="/address/edit?_id=<%= item._id %>">編集</a> |
+                    <a href="/address/delete?_id=<%= item._id %>">削除</a>
+                </p>
+            <% } %>
+
+        </div>
+        <div class="col-sm-3">
+            <a href="/address/register" type="button" class="btn btn-primary">新しい住所を追加する</a>
+        </div>
+    </div>
+</main>
+
 </body>
+
+</html>
