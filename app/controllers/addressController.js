@@ -5,6 +5,7 @@ const Address = require("../models/address"),
 	{validationResult} = require('express-validator'),
 	getAddressParams = body => {
 		return {
+			_id: body._id,
 			firstName: body.firstName,
 			lastName: body.lastName,
 			telephone: body.telephone,
@@ -103,8 +104,52 @@ module.exports = {
 					})
 			})
 			.catch(err => {
-				console.error(err)
+				console.error(err);
 				throw err;
 			})
+	},
+	edit: (req, res, next) => {
+		const address = getAddressParams(req.body);
+		const loginUser = req.session.passport.user;
+
+		const locals = {
+			errors: validationResult(req).errors,
+			original: address,
+			actionURL: "/account/address/edit",
+			btnText: "住所を更新"
+		}
+		if (!address._id) {
+			locals.errors.push({
+				msg: '不正なリクエストです。',
+				param: 'firstName',
+				location: 'db'
+			})
+		}
+		if (locals.errors.length !== 0) { // バリデーション失敗
+			return res.render('./address/register.ejs', locals);
+		}
+
+		// ドキュメント更新
+		Address
+			.findByIdAndUpdate(address._id, address)
+			.then((address) => {
+				// defaultAddressの変更
+				if (getIsDefault(req.body)) {
+					User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: address._id}})
+						.catch(err => {
+							throw err
+						})
+				}
+				next();
+			})
+			.catch(err => {
+				console.error(err);
+				locals.errors.push({
+					msg: 'DBエラー',
+					param: 'firstName',
+				})
+				return res.render('./address/register.ejs', locals);
+			})
+
 	}
 }
