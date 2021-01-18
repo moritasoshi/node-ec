@@ -4,17 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
 </head>
 
 <body>
-
 <main role="main" class="container">
 
     <% var address = address || []; %>
     <% var defaultAddress = defaultAddress || {}; %>
 
     <div class="border-bottom mt-5 mb-5">
-        <h1>私のアカウント</h1>
+        <h1>マイアカウント</h1>
     </div>
 
     <div class="row">
@@ -29,8 +29,8 @@
                 <p><%= defaultAddress.address %></p>
                 <p>電話番号:<%= defaultAddress.telephone %></p>
                 <p>
-                    <a href="/address/edit?_id=<%= defaultAddress._id %>">編集</a> |
-                    <a href="/address/delete?_id=<%= defaultAddress._id %>">削除</a>
+                    <a href="/account/address/edit?_id=<%= defaultAddress._id %>">編集</a> |
+                    <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
                 </p>
             </div>
             <% for (var item of address) { %>
@@ -41,18 +41,24 @@
                     <p>電話番号:<%= item.telephone %></p>
                 </div>
                 <p>
-                    <a href="/address/edit?_id=<%= item._id %>">編集</a> |
-                    <a href="/address/delete?_id=<%= item._id %>">削除</a>
+                    <a href="/account/address/edit?_id=<%= item._id %>">編集</a> |
+                    <a href="#" onclick="disp('<%= item._id %>')">削除</a>
                 </p>
             <% } %>
-
         </div>
         <div class="col-sm-3">
-            <a href="/address/register" type="button" class="btn btn-primary">新しい住所を追加する</a>
+            <a href="/account/address/register" type="button" class="btn btn-primary">新しい住所を追加する</a>
         </div>
     </div>
 </main>
-
+<script>
+	function disp(id) {
+		console.log(id)
+		if (window.confirm('本当に削除しますか？')) {
+			location.href = `/account/address/delete?_id=${id}`;
+		}
+	}
+</script>
 </body>
 
 </html>
