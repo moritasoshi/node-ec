@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+<main role="main" class="container">
+
+    <div class="border-bottom mt-5 mb-5">
+      <h1>あなたのカート</h1>
+      <% if (noCart != '') { %>
+        <h1>カートに商品がありません</h1> <% } %> 
+    </div>
+
+    <% if (body != []) { %>
+    <% body.forEach(function (value) { %>
+
+    
+    <div class="row">
+      
+      <div class="col">
+          <p><%= value.photoURL %></p>
+      </div>
+      
+      <div class="col">
+        <p><%= value.name %></p>
+      </div>
+      
+      
+      <div class="col">
+        <!-- Ajax jquerry ライブラリ使用 -->
+        <!-- <button><strong></strong>－</strong></button> -->
+        <!-- <input type="text" name="" id="" value="1" pattern="[0-9]"> -->
+        <input type="number" name="num1" min="1" max="10" value="1" step="1" required>
+        <!-- <button><strong>＋</strong></button> -->
+      </div>
+        <br>
+        <br>
+      <div class="col">
+        <p><%= value.price %>円</p>
+    　</div>
+      <div class="col">
+        <button>×</button>
+      </div>
+
+    </div>
+
+
+    <% }); %>
+    <% } %>
+
+    <div class="row">
+      <div class="col">
+        <span>合計金額</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <button>ご購入手続きへ</button>
+      </div>
+    </div>
+
+</main>
+</body>
+</html>
