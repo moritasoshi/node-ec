@@ -17,9 +17,10 @@
     <% var ers = locals.errors || []; %>
     <% var org = locals.original || {}; %>
 
-    <form method="post" action="<%= locals.actionURL %>">
+    <form method="post" action="/account/address/update">
         <div class="form-group row">
             <div class="col-sm-10">
+                <input type="hidden" name="_id" value="<%= org._id %>">
                 <input type="text" class="form-control" id="firstName"
                        name="firstName"
                        value="<%= org.firstName %>" placeholder="姓"/>
@@ -97,14 +98,13 @@
             </div>
         </div>
         <div class="form-group form-check">
-            <% const isDefault = locals.isDefault === "1" ? "checked" : "" %>
-            <input type="checkbox" class="form-check-input" id="isDefault" name="isDefault" value="1" <%= isDefault %>>
+            <input type="checkbox" class="form-check-input" id="isDefault" name="isDefault" value="1" checked>
             <label class="form-check-label" for="isDefault">この住所をデフォルトとして設定する</label>
         </div>
         <div class="form-group row">
             <div class="col-sm-2"></div>
             <div class="col-sm-10">
-                <input type="submit" class="btn btn-primary" value="<%= locals.btnText %>"/>
+                <input type="submit" class="btn btn-primary" value="住所を更新"/>
             </div>
         </div>
     </form>

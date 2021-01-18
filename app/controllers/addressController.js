@@ -25,7 +25,6 @@ module.exports = {
 			.populate("defaultAddress")
 			.exec()
 			.then(data => {
-				console.log(data)
 				res.render('./address/show.ejs', {address: data.address, defaultAddress: data.defaultAddress});
 			})
 			.catch(err => {
@@ -33,14 +32,20 @@ module.exports = {
 			})
 	},
 	toRegister: (req, res) => {
-		res.render('./address/register.ejs');
+		const locals = {
+			actionURL: "/account/address/register",
+			btnText: "住所を追加"
+		}
+		res.render('./address/register.ejs', locals);
 	},
 	register: (req, res, next) => {
 		const newAddress = new Address(getAddressParams(req.body));
 		const loginUser = req.session.passport.user;
 		const locals = {
 			errors: validationResult(req).errors,
-			original: req.body
+			original: req.body,
+			actionURL: "/account/address/register",
+			btnText: "住所を追加"
 		}
 		if (locals.errors.length !== 0) { // バリデーション失敗
 			return res.render('./address/register.ejs', locals);
@@ -75,4 +80,31 @@ module.exports = {
 				return res.render('./address/register.ejs', locals);
 			})
 	},
+	toEdit: (req, res) => {
+		const addressId = req.params._id;
+		const loginUser = req.session.passport.user;
+
+		Address.findOne({_id: addressId})
+			.then(data => {
+				var locals = {
+					original: data,
+					actionURL: "/account/address/edit",
+					btnText: "住所を更新",
+					isDefault: "0"
+				}
+				User.findOne({_id: loginUser._id}) // デフォルトの住所を確認
+					.populate("defaultAddress")
+					.exec()
+					.then(data => {
+						if (data.defaultAddress._id.toString() === addressId) {
+							locals.isDefault = "1";
+						}
+						res.render('./address/register.ejs', locals);
+					})
+			})
+			.catch(err => {
+				console.error(err)
+				throw err;
+			})
+	}
 }

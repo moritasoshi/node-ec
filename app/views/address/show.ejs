@@ -29,7 +29,7 @@
                 <p><%= defaultAddress.address %></p>
                 <p>電話番号:<%= defaultAddress.telephone %></p>
                 <p>
-                    <a href="/account/address/edit?_id=<%= defaultAddress._id %>">編集</a> |
+                    <a href="/account/address/edit/<%= defaultAddress._id %>">編集</a> |
                     <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
                 </p>
             </div>
@@ -41,7 +41,7 @@
                     <p>電話番号:<%= item.telephone %></p>
                 </div>
                 <p>
-                    <a href="/account/address/edit?_id=<%= item._id %>">編集</a> |
+                    <a href="/account/address/edit/<%= item._id %>">編集</a> |
                     <a href="#" onclick="disp('<%= item._id %>')">削除</a>
                 </p>
             <% } %>
@@ -55,7 +55,7 @@
 	function disp(id) {
 		console.log(id)
 		if (window.confirm('本当に削除しますか？')) {
-			location.href = `/account/address/delete?_id=${id}`;
+			location.href = `/account/address/delete/${id}`;
 		}
 	}
 </script>
