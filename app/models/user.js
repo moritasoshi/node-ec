@@ -23,7 +23,8 @@ const User = new Schema(
 			type: String,
 			required: true
 		},
-		address: [{type: Schema.Types.ObjectId, ref: "Address"}]
+		address: [{type: Schema.Types.ObjectId, ref: "Address"}],
+		defaultAddress: {type: Schema.Types.ObjectId, ref: "Address"}
 	},
 	{
 		timestamps: true
