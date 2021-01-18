@@ -10,7 +10,7 @@ const Address = require("../models/address"),
 			lastName: body.lastName,
 			telephone: body.telephone,
 			zipCode: body.zipCode,
-			address: body.address,
+			addresses: body.addresses,
 		};
 	},
 	getIsDefault = body => {
@@ -22,11 +22,13 @@ module.exports = {
 	show: (req, res) => {
 		const loginUser = req.session.passport.user;
 		User.findOne({_id: loginUser._id})
-			.populate("address")
+			.populate("addresses")
 			.populate("defaultAddress")
 			.exec()
 			.then(data => {
-				res.render('./address/show.ejs', {address: data.address, defaultAddress: data.defaultAddress});
+				const addresses = data.addresses
+					.filter((v) => v._id.toString() !== data.defaultAddress._id.toString());
+				res.render('./address/show.ejs', {addresses: addresses, defaultAddress: data.defaultAddress});
 			})
 			.catch(err => {
 				console.error(err)
@@ -56,7 +58,7 @@ module.exports = {
 			.then((address) => {
 				User.updateOne( // addressesへの追加
 					{_id: loginUser._id},
-					{$push: {address: address._id}},
+					{$push: {addresses: address._id}},
 					function (err) {
 						if (err) throw err;
 					}
@@ -136,11 +138,11 @@ module.exports = {
 				// defaultAddressの変更
 				if (getIsDefault(req.body)) {
 					User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: address._id}})
+						.then(() => next())
 						.catch(err => {
 							throw err
 						})
 				}
-				next();
 			})
 			.catch(err => {
 				console.error(err);

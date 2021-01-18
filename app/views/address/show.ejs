@@ -10,7 +10,7 @@
 <body>
 <main role="main" class="container">
 
-    <% var address = address || []; %>
+    <% var addresses = addresses || []; %>
     <% var defaultAddress = defaultAddress || {}; %>
 
     <div class="border-bottom mt-5 mb-5">
@@ -33,7 +33,7 @@
                     <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
                 </p>
             </div>
-            <% for (var item of address) { %>
+            <% for (var item of addresses) { %>
                 <div class="border-bottom">
                     <p><%= item.firstName %><%= item.lastName %></p>
                     <p>〒<%= item.zipCode %></p>
