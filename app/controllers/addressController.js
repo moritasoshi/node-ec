@@ -193,7 +193,7 @@ module.exports = {
 				}
 
 				// Addressの削除
-				User.updateMany({}, {$pull: {addresses: addressId}})
+				User.updateMany({}, {$pull: {addresses: addressId}}, {multi: true})
 					.then(() => Address.findByIdAndRemove(addressId))
 					.catch(err => res.send({'error': 'An error has occurred - ' + err}))
 					.finally(() => res.redirect('/account/address'));
