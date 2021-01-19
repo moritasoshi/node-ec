@@ -78,10 +78,6 @@ app.use(function (req, res, next) {
 
 // ルーティング
 app.use("/", router);
-//app.use("/item", router);
-app.get('/', (req, res) => {
-	res.render("./sample.ejs");
-});
 
 // サーバー
 app.listen(PORT);

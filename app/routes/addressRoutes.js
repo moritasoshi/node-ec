@@ -1,6 +1,6 @@
 const router = require("express").Router(),
 	addressController = require("../controllers/addressController"),
-	validate = require("../validate/validate")
+	validate = require("../lib/validate/validate")
 
 router.get("/", addressController.show);
 router.get("/edit/:_id", addressController.toEdit);
