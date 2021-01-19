@@ -62,9 +62,10 @@ module.exports = {
 		failureRedirect: "/account/login",
 		failureFlash: true,
 		successRedirect: "/",
+		session: true
 	}),
 	logout: (req, res) => {
-		req.session.passport.user = undefined;
+		req.logout();
 		res.redirect('/');
 	}
 }
