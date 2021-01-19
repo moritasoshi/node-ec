@@ -11,7 +11,7 @@
 <main role="main" class="container">
 
     <% var addresses = addresses || []; %>
-    <% var defaultAddress = defaultAddress || {}; %>
+    <% var defaultAddress = defaultAddress || []; %>
 
     <div class="border-bottom mt-5 mb-5">
         <h1>マイアカウント</h1>
@@ -22,7 +22,7 @@
             <a href="/account">アカウントの詳細に戻る</a>
         </div>
         <div class="col-sm-6">
-            <% if(!(addresses.length === 0 || defaultAddress)) { %>
+            <% if(defaultAddress.length !== 0) { %>
                 <div class="border-bottom">
                     <h3><%= defaultAddress.firstName %> <%= defaultAddress.lastName %></h3>
                     <p>(デフォルト)</p>
@@ -34,6 +34,8 @@
                         <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
                     </p>
                 </div>
+            <% } %>
+            <% if(addresses.length > 0) { %>
                 <% for (var item of addresses) { %>
                     <div class="border-bottom">
                         <p><%= item.firstName %><%= item.lastName %></p>
