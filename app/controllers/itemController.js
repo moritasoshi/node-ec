@@ -21,8 +21,9 @@ module.exports = {
 
     Item.find({_id: "60011c2e19a23bdda3b07d7c"}, function(err, result) {
       if (err) throw err;
-      
+      console.log(result[0]._id);
       res.render('./detail.ejs', {
+        _id: result[0]._id,
         name: result[0].name,
         price: result[0].price,
         photoURL: result[0].photoURL,
