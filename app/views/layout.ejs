@@ -5,75 +5,63 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Node EC</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/nodec.css">
 </head>
 <body>
-<div id="nav">
-    <div class="col-sm nav-align">
-        <h1 id="title">Book Mode</h1>
+<nav class="navbar navbar-expand-lg navbar-light container">
+    <a class="navbar-brand" href="/">
+        <img src="/image/site_image.png" height="65" alt="">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <% if (user) { %>
+                    <a class="nav-link disabled" href="#">
+                        Hello,
+                        <%= user.firstName %>
+                    </a>
+                <% } else { %>
+                    <a class="nav-link" href="/account/login">Sign in</a>
+                <% } %>
+            </li>
+            <% if (user) { %>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/account">Your account</a>
+                        <a class="dropdown-item" href="/account/address">Addresses</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/account/logout">Sign out</a>
+                    </div>
+                </li>
+            <% } %>
+            <li class="nav-item">
+                <a href="/order" class="btn btn-light" role="button">Cart</a>
+            </li>
+        </ul>
     </div>
-    <div class="col-sm nav-align">
-        <% if (user) { %>
-            <%= user.email %>
-        <% } %>
-        <a href="/">
-            <span class="button">Home</span>
-        </a>
-        <a href="/account/login">
-            <span class="button">ログイン</span>
-        </a>
-        <a href="/account/register">
-            <span class="button">アカウント作成</span>
-        </a>
-        <a href="/order">
-            <span class="button">カート</span>
-        </a>
-        <a href="/account/logout">
-            <span class="button">ログアウト</span>
-        </a>
-            <a href="/address/register">
-            <span class="button">住所追加</span>
-        </a>
-    </div>
-</div>
+</nav>
 <!-- 各ejsファイルのbody -->
-<%- body %>
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-6">
-                <div>
-                    <a href="#">
-                        <span class="button">Book Modeとは</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <span class="button">FAQ</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <span class="button">ニュース</span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-6">
-                <div>
-                    <a href="#">
-                        <span class="button">Twitter</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <span class="button">Facebook</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
+<div class="container bg-light jumbotron">
+    <%- body %>
+</div>
+<div class="container">
+    <footer class="text-muted">
+        <p class="float-right">
+            · <a href="#">Twitter</a> · <a href="#">Facebook</a>
+        </p>
+        <p>© 2021 Tokyo Book Mode, Inc. · <a href="#">Privacy</a> · <a href="#">News</a> · <a href="#">FAQ</a></p>
+    </footer>
+</div>
 </body>
 </html>
