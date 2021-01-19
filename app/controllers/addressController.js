@@ -3,14 +3,23 @@
 const Address = require("../models/address"),
 	User = require("../models/user"),
 	{validationResult} = require('express-validator'),
-	getAddressParams = body => {
+	getNewAddressParams = body => {
+		return {
+			firstName: body.firstName,
+			lastName: body.lastName,
+			telephone: body.telephone,
+			zipCode: body.zipCode,
+			address: body.address,
+		};
+	},
+	getUpdateAddressParams = body => {
 		return {
 			_id: body._id,
 			firstName: body.firstName,
 			lastName: body.lastName,
 			telephone: body.telephone,
 			zipCode: body.zipCode,
-			addresses: body.addresses,
+			address: body.address,
 		};
 	},
 	getIsDefault = body => {
@@ -20,18 +29,19 @@ const Address = require("../models/address"),
 
 module.exports = {
 	show: (req, res) => {
-		const loginUser = req.session.passport.user;
+		const loginUser = req.user;
 		User.findOne({_id: loginUser._id})
 			.populate("addresses")
 			.populate("defaultAddress")
 			.exec()
-			.then(data => {
-				const addresses = data.addresses
-					.filter((v) => v._id.toString() !== data.defaultAddress._id.toString());
-				res.render('./address/show.ejs', {addresses: addresses, defaultAddress: data.defaultAddress});
+			.then(user => {
+				const addresses = user.addresses
+					.filter((v) => v._id.toString() !== user.defaultAddress._id.toString());
+				res.render('./address/show.ejs', {addresses: addresses, defaultAddress: user.defaultAddress});
 			})
 			.catch(err => {
 				console.error(err)
+				res.send({'error': 'An error has occurred - ' + err})
 			})
 	},
 	toRegister: (req, res) => {
@@ -41,9 +51,10 @@ module.exports = {
 		}
 		res.render('./address/register.ejs', locals);
 	},
-	register: (req, res, next) => {
-		const newAddress = new Address(getAddressParams(req.body));
-		const loginUser = req.session.passport.user;
+	register: async (req, res) => {
+		const newAddress = new Address(getNewAddressParams(req.body));
+		let isDefault = getIsDefault(req.body);
+		const loginUser = req.user;
 		const locals = {
 			errors: validationResult(req).errors,
 			original: req.body,
@@ -54,16 +65,23 @@ module.exports = {
 			return res.render('./address/register.ejs', locals);
 		}
 
+		const latestUser = await User.findById(loginUser._id, function (err, data) {
+			if(err) throw err;
+			return data;
+		})
+
+		if (!latestUser['defaultAddress']) isDefault = true; // 初回はデフォルトに設定
+
 		newAddress.save()
 			.then((address) => {
 				User.updateOne( // addressesへの追加
 					{_id: loginUser._id},
-					{$push: {addresses: address._id}},
+					{$addToSet: {addresses: address._id}},
 					function (err) {
 						if (err) throw err;
 					}
 				);
-				if (getIsDefault(req.body)) {
+				if (isDefault) {
 					User.updateOne( // defaultAddressの変更
 						{_id: loginUser._id},
 						{$set: {defaultAddress: address._id}},
@@ -72,7 +90,7 @@ module.exports = {
 						}
 					);
 				}
-				next()
+				res.redirect('/account/address')
 			})
 			.catch(err => {
 				console.error(err);
@@ -85,7 +103,7 @@ module.exports = {
 	},
 	toEdit: (req, res) => {
 		const addressId = req.params._id;
-		const loginUser = req.session.passport.user;
+		const loginUser = req.user;
 
 		Address.findOne({_id: addressId})
 			.then(data => {
@@ -110,9 +128,10 @@ module.exports = {
 				throw err;
 			})
 	},
-	edit: (req, res, next) => {
-		const address = getAddressParams(req.body);
-		const loginUser = req.session.passport.user;
+	edit: async (req, res) => {
+		const address = getUpdateAddressParams(req.body);
+		const loginUser = req.user;
+		let isDefault = getIsDefault(req.body);
 
 		const locals = {
 			errors: validationResult(req).errors,
@@ -131,6 +150,13 @@ module.exports = {
 			return res.render('./address/register.ejs', locals);
 		}
 
+		const latestUser = await User.findById(loginUser._id, function (err, data) {
+			if(err) throw err;
+			return data;
+		})
+
+		if (latestUser['addresses'].length === 1) isDefault = true; // 住所が1つの場合はデフォルトに設定
+
 		// ドキュメント更新
 		Address
 			.findByIdAndUpdate(address._id, address)
@@ -138,7 +164,7 @@ module.exports = {
 				// defaultAddressの変更
 				if (getIsDefault(req.body)) {
 					User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: address._id}})
-						.then(() => next())
+						.then(() => res.redirect('/account/address'))
 						.catch(err => {
 							throw err
 						})
@@ -153,5 +179,24 @@ module.exports = {
 				return res.render('./address/register.ejs', locals);
 			})
 
-	}
+	},
+	// 参照値を削除した後に、ドキュメントを削除
+	// ※ドキュメントを先に削除すると、参照値の削除は不可能
+	delete: (req, res) => {
+		const loginUser = req.user;
+		const addressId = req.params._id;
+		// デフォルトの住所は削除不可
+		User.findById(loginUser._id)
+			.then(data => {
+				if (data['defaultAddress'].toString() === addressId.toString()) {
+					return res.send('デフォルトの住所は削除できません');
+				}
+
+				// Addressの削除
+				User.updateMany({}, {$pull: {addresses: addressId}})
+					.then(() => Address.findByIdAndRemove(addressId))
+					.catch(err => res.send({'error': 'An error has occurred - ' + err}))
+					.finally(() => res.redirect('/account/address'));
+			})
+	},
 }

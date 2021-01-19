@@ -20,15 +20,21 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <% if (user) { %>
+            <% if (user) { %>
+                <li class="nav-item">
                     <a class="nav-link disabled" href="#">
                         Hello,
                         <%= user.firstName %>
                     </a>
-                <% } else { %>
+                </li>
+            <% } else { %>
+                <li class="nav-item">
                     <a class="nav-link" href="/account/login">Sign in</a>
-                <% } %>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/account/register">Sign up</a>
+                </li>
+            <% } %>
             </li>
             <% if (user) { %>
                 <li class="nav-item dropdown">
