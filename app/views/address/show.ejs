@@ -22,28 +22,30 @@
             <a href="/account">アカウントの詳細に戻る</a>
         </div>
         <div class="col-sm-6">
-            <div class="border-bottom">
-                <h3><%= defaultAddress.firstName %> <%= defaultAddress.lastName %></h3>
-                <p>(デフォルト)</p>
-                <p>〒<%= defaultAddress.zipCode %></p>
-                <p><%= defaultAddress.address %></p>
-                <p>電話番号:<%= defaultAddress.telephone %></p>
-                <p>
-                    <a href="/account/address/edit/<%= defaultAddress._id %>">編集</a> |
-                    <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
-                </p>
-            </div>
-            <% for (var item of addresses) { %>
+            <% if(!(addresses.length === 0 || defaultAddress)) { %>
                 <div class="border-bottom">
-                    <p><%= item.firstName %><%= item.lastName %></p>
-                    <p>〒<%= item.zipCode %></p>
-                    <p><%= item.address %></p>
-                    <p>電話番号:<%= item.telephone %></p>
+                    <h3><%= defaultAddress.firstName %> <%= defaultAddress.lastName %></h3>
+                    <p>(デフォルト)</p>
+                    <p>〒<%= defaultAddress.zipCode %></p>
+                    <p><%= defaultAddress.address %></p>
+                    <p>電話番号:<%= defaultAddress.telephone %></p>
+                    <p>
+                        <a href="/account/address/edit/<%= defaultAddress._id %>">編集</a> |
+                        <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
+                    </p>
                 </div>
-                <p>
-                    <a href="/account/address/edit/<%= item._id %>">編集</a> |
-                    <a href="#" onclick="disp('<%= item._id %>')">削除</a>
-                </p>
+                <% for (var item of addresses) { %>
+                    <div class="border-bottom">
+                        <p><%= item.firstName %><%= item.lastName %></p>
+                        <p>〒<%= item.zipCode %></p>
+                        <p><%= item.address %></p>
+                        <p>電話番号:<%= item.telephone %></p>
+                    </div>
+                    <p>
+                        <a href="/account/address/edit/<%= item._id %>">編集</a> |
+                        <a href="#" onclick="disp('<%= item._id %>')">削除</a>
+                    </p>
+                <% } %>
             <% } %>
         </div>
         <div class="col-sm-3">

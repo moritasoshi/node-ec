@@ -3,14 +3,23 @@
 const Address = require("../models/address"),
 	User = require("../models/user"),
 	{validationResult} = require('express-validator'),
-	getAddressParams = body => {
+	getNewAddressParams = body => {
+		return {
+			firstName: body.firstName,
+			lastName: body.lastName,
+			telephone: body.telephone,
+			zipCode: body.zipCode,
+			address: body.address,
+		};
+	},
+	getUpdateAddressParams = body => {
 		return {
 			_id: body._id,
 			firstName: body.firstName,
 			lastName: body.lastName,
 			telephone: body.telephone,
 			zipCode: body.zipCode,
-			addresses: body.addresses,
+			address: body.address,
 		};
 	},
 	getIsDefault = body => {
@@ -32,6 +41,7 @@ module.exports = {
 			})
 			.catch(err => {
 				console.error(err)
+				res.send({'error': 'An error has occurred - ' + err})
 			})
 	},
 	toRegister: (req, res) => {
@@ -42,7 +52,7 @@ module.exports = {
 		res.render('./address/register.ejs', locals);
 	},
 	register: (req, res, next) => {
-		const newAddress = new Address(getAddressParams(req.body));
+		const newAddress = new Address(getNewAddressParams(req.body));
 		const loginUser = req.session.passport.user;
 		const locals = {
 			errors: validationResult(req).errors,
@@ -111,7 +121,7 @@ module.exports = {
 			})
 	},
 	edit: (req, res, next) => {
-		const address = getAddressParams(req.body);
+		const address = getUpdateAddressParams(req.body);
 		const loginUser = req.session.passport.user;
 
 		const locals = {
@@ -153,5 +163,10 @@ module.exports = {
 				return res.render('./address/register.ejs', locals);
 			})
 
+	},
+	delete: (req, res, next) => {
+		Address.findByIdAndRemove(req.params._id)
+			.then(() => next())
+			.catch(err => res.send({'error': 'An error has occurred - ' + err}));
 	}
 }
