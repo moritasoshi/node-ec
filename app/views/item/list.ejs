@@ -4,25 +4,38 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/css/nodec.css">
+
 </head>
 
 <body>
 
 <main role="main" class="container">
 
-    <div class="border-bottom mt-5 mb-5">
-        <h1>送付先の住所</h1>
-    </div>
-
     <h3>item list</h3>
     <% var items = locals.itemList || []; %>
 
-    <% for (var item of items) { %>
-        <p><%= item.name %></p>
-    <% } %>
-
-    <% var ers = locals.errors || []; %>
-    <% var org = locals.original || {}; %>
+    <% items.forEach(function (item, index) { %>
+        <% if(index % 4 === 0) { %>
+        <div class="row mb-3">
+            <% } %>
+            <div class="col-3">
+                <div class="card text-center" style="width: 12rem; height: 24rem;">
+                    <a href="/item/<%= item._id %>">
+                        <img alt="Card image cap" class="card-img-top embed-responsive-item"
+                             style="max-height: 16rem;" width="auto"
+                             src="./image/<%= item.photoURL %>"/>
+                    </a>
+                    <div class="card-body" style="height: 8rem;">
+                        <h5 class="card-title">¥<%= item.price.toLocaleString() %></h5>
+                        <p class="abridgement"><a href="/item/<%= item._id %>"><%= item.name %></a></p>
+                    </div>
+                </div>
+            </div>
+            <% if(index % 4 === 3) { %>
+        </div>
+        <% } %>
+    <% }); %>
 
 </main>
 
