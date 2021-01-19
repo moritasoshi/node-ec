@@ -2,7 +2,7 @@ const router = require("express").Router(),
 	userController = require("../controllers/userController"),
 	addressRoutes = require("../routes/addressRoutes"),
 	authenticate = require("../lib/security/authenticate"),
-	validate = require("../validate/validate");
+	validate = require("../lib/validate/validate");
 
 router.use("/address", authenticate.ensureAuthenticated ,addressRoutes);
 

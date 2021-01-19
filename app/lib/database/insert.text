@@ -1,0 +1,1 @@
+mongoimport -h localhost:27017 --db nodec --collection items --drop --jsonArray --file insert_items.json

@@ -9,30 +9,34 @@ const Item = require("../models/item"),
 			price: '1',
 			releaseDate: '1',
 			category: '1',
-      description: '1',
-      photoURL: '1'
+			description: '1',
+			photoURL: '1'
 		};
-  };
-  
-  
+	};
+
 
 module.exports = {
-	 show: (req, res) => {
+	show: (req, res) => {
+		Item.find({_id: "60011c2e19a23bdda3b07d7c"}, function (err, result) {
+			if (err) throw err;
 
-    Item.find({_id: "60011c2e19a23bdda3b07d7c"}, function(err, result) {
-      if (err) throw err;
-      
-      res.render('./detail.ejs', {
-        name: result[0].name,
-        price: result[0].price,
-        photoURL: result[0].photoURL,
-        description: result[0].description,
-      });
-      
-      
-    });
-
-    
+			res.render('./detail.ejs', {
+				name: result[0].name,
+				price: result[0].price,
+				photoURL: result[0].photoURL,
+				description: result[0].description,
+			});
+		});
 	},
+	itemList: async (req, res) => {
+		const itemList = await Item.find({}, (err, data) => {
+			if (err) throw err;
+			return data;
+		});
+		const locals = {
+			itemList: itemList
+		}
+		res.render("./item/list.ejs", locals);
+	}
 
 }
