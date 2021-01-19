@@ -1,18 +1,15 @@
 "use strict";
 
 const router = require("express").Router(),
+	userRoutes = require("./userRoutes"),
+	itemRoutes = require("./itemRoutes"),
+	orderRoutes = require("./orderRoutes"),
+	itemController = require("../controllers/itemController");
 
-  userRoutes = require("./userRoutes"),
-  addressRoutes = require("./addressRoutes"),
-  itemRoutes = require("./itemRoutes"),
-  orderRoutes = require("./orderRoutes");
-    
 
-  router.use("/account", userRoutes);
-  router.use("/address", addressRoutes);
-  router.use("/item", itemRoutes);
-  router.use("/order", orderRoutes);
-  
-
+router.get("/", itemController.itemList);
+router.use("/account", userRoutes);
+router.use("/item", itemRoutes);
+router.use("/order", orderRoutes);
 
 module.exports = router;

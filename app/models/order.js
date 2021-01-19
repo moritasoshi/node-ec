@@ -6,11 +6,11 @@ const mongoose = require("mongoose"),
 const Order = new Schema(
   {
     user: {
-      //type: new mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId, ref: "User",
     },
-    orderItems: {
-      type: Array,
-    },
+    orderItems:[
+      {type: Schema.Types.ObjectId, ref: "orderItem"}
+    ],
     subTotal: {
       type: Number,
     },
@@ -24,7 +24,7 @@ const Order = new Schema(
       type: Date,
     },
     destinationAddress: {
-      //type: new mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId, ref: "Address",
     },
     paymentMethod: {
       type: Number,

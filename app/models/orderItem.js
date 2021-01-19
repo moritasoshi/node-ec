@@ -5,14 +5,7 @@ const mongoose = require("mongoose"),
   
 const OrderItem = new Schema(
   {
-    item: [{
-      name: {type: String, ref: 'Item'},
-      price: {type: Number, ref: 'Item'},
-      releaseDate: {type: String, ref: 'Item'},
-      category: {type: String, ref: 'Item'},
-      description: {type: String, ref: 'Item'},
-      photoURL: {type: String, ref: 'Item'}
-    }],
+    item: {type: Schema.Types.ObjectId, ref: "Item"},
     quantity: {
       type: Number,
     },
@@ -20,4 +13,3 @@ const OrderItem = new Schema(
 );
 
 module.exports = mongoose.model("OrderItem", OrderItem);
-//module.exports = mongoose.model("Item", Item);

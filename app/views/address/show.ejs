@@ -1,3 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+</head>
+
 <body>
-    address created.
+<main role="main" class="container">
+
+    <% var addresses = addresses || []; %>
+    <% var defaultAddress = defaultAddress || []; %>
+
+    <div class="border-bottom mt-5 mb-5">
+        <h1>マイアカウント</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <a href="/account">アカウントの詳細に戻る</a>
+        </div>
+        <div class="col-sm-6">
+            <% if(defaultAddress.length !== 0) { %>
+                <div class="border-bottom">
+                    <h3><%= defaultAddress.firstName %> <%= defaultAddress.lastName %></h3>
+                    <p>(デフォルト)</p>
+                    <p>〒<%= defaultAddress.zipCode %></p>
+                    <p><%= defaultAddress.address %></p>
+                    <p>電話番号:<%= defaultAddress.telephone %></p>
+                    <p>
+                        <a href="/account/address/edit/<%= defaultAddress._id %>">編集</a> |
+                        <a href="#" onclick="disp('<%= defaultAddress._id %>')">削除</a>
+                    </p>
+                </div>
+            <% } %>
+            <% if(addresses.length > 0) { %>
+                <% for (var item of addresses) { %>
+                    <div class="border-bottom">
+                        <p><%= item.firstName %><%= item.lastName %></p>
+                        <p>〒<%= item.zipCode %></p>
+                        <p><%= item.address %></p>
+                        <p>電話番号:<%= item.telephone %></p>
+                    </div>
+                    <p>
+                        <a href="/account/address/edit/<%= item._id %>">編集</a> |
+                        <a href="#" onclick="disp('<%= item._id %>')">削除</a>
+                    </p>
+                <% } %>
+            <% } %>
+        </div>
+        <div class="col-sm-3">
+            <a href="/account/address/register" type="button" class="btn btn-primary">新しい住所を追加する</a>
+        </div>
+    </div>
+</main>
+<script>
+	function disp(id) {
+		console.log(id)
+		if (window.confirm('本当に削除しますか？')) {
+			location.href = `/account/address/delete/${id}`;
+		}
+	}
+</script>
 </body>
+
+</html>

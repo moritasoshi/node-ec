@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+
+<main role="main" class="container">
+
+    <div class="border-bottom mt-5 mb-5">
+        <h1>送付先の住所</h1>
+    </div>
+
+    <h3>item list</h3>
+    <% var items = locals.itemList || []; %>
+
+    <% for (var item of items) { %>
+        <p><%= item.name %></p>
+    <% } %>
+
+    <% var ers = locals.errors || []; %>
+    <% var org = locals.original || {}; %>
+
+</main>
+
+</body>
+
+</html>

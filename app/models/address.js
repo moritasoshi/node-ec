@@ -14,11 +14,11 @@ const Address = new Schema(
 			required: true,
 		},
 		telephone: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 		zipCode: {
-			type: Number,
+			type: String,
 			required: true
 		},
 		address: {
