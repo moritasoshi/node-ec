@@ -140,7 +140,6 @@ module.exports = {
 			.populate("orderItems")
 			.exec()
 			.then(data => {
-				console.log(`order : ${data}`)
 				return data;
 			})
 			.catch(err => {
@@ -156,7 +155,6 @@ module.exports = {
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
-					console.log(`order created : ${data}`)
 					return data;
 				})
 				.catch(err => {
@@ -167,13 +165,12 @@ module.exports = {
 			// 同じ商品がある場合は数量のみ更新
 			const orderItemWithTheSameItem = order["orderItems"]
 				.filter(v => v.item.toString() === newOrderItem.item.toString())
-			console.log(`orderItemWithTheSameItem : ${orderItemWithTheSameItem}`)
-			if (orderItemWithTheSameItem) {
+
+			if (orderItemWithTheSameItem.length > 0) {
 				await OrderItem.findByIdAndUpdate(orderItemWithTheSameItem[0]["_id"],
 					{$inc: {quantity: newOrderItem.quantity}},
 					{new: true})
 					.then(data => {
-						console.log(`updated order item : ${data}`)
 					})
 					.catch(err => {
 						console.error(err);
@@ -186,7 +183,6 @@ module.exports = {
 		// orderItemの新規作成
 		const orderItem = await OrderItem.create(newOrderItem)
 			.then(data => {
-				console.log(`order item: ${data}`)
 				return data;
 			})
 			.catch(err => {
