@@ -1,45 +1,21 @@
 "use strict";
 
-var Order = require("../models/order");
-var OrderItem = require("../models/orderItem");
-var Item = require("../models/item");
-var User = require("../models/user");
-var Address = require("../models/address");
-const { Schema } = require("mongoose");
-const user = require("../models/user");
-
-//const { body } = require("express-validator");
-
-
-	getOrderParams : body => {
+const Order = require("../models/order"),
+	OrderItem = require("../models/orderItem"),
+	Item = require("../models/item"),
+	User = require("../models/user"),
+	Address = require("../models/address"),
+	user = require("../models/user"),
+	getOrderItemParams = body => {
 		return {
-			user: body.user,
-			orderItems: body.orderItems,
-			subTotal: body.subTotal,
-			tax: body.tax,
-      total: body.total,
-      orderDate: body.orderDate,
-      destinationAddress: body.destinationAddress,
-      paymentMethod: body.paymentMethod,
-      status: body.status,
-		};
-  };
-
-  getItemParams : body => {
-		return {
-      _id: body._id,
-			name: body.name,
-			price: body.price,
-			releaseDate: body.releaseDate,
-			category: body.category,
-      description: body.description,
-      photoURL: body.photoURL,
-		};
-  };
-  
-  
+			item: body._id,
+			quantity: body.quantity,
+		}
+	}
+// { body } = require("express-validator");
 
 module.exports = {
+
    //カート中身画面表示
    
 	 index: async(req, res) => {
@@ -117,164 +93,75 @@ module.exports = {
     
   },
   
-  //カートに商品追加
-  add: async (req, res) => {
 
-    //商品詳細IDから商品を取得
-    //var newItem = new Item();
-    const detailItem = await Item.find({ _id: req.body._id }, function(err, result) {
-      if (err) throw err;
-      return result;
-      //newItem = result;
-      //console.log(newItem);
-    });
+	//カートに商品追加
+	add: async (req, res) => {
+		const loginUser = req.user;
+		const newOrderItem = getOrderItemParams(req.body);
 
+		// カートがすでに存在するか判定
+		let order = await Order.findOne({user: loginUser._id})
+			.populate("orderItems")
+			.exec()
+			.then(data => {
+				return data;
+			})
+			.catch(err => {
+				console.error(err);
+				throw err;
+			});
 
-    //カートが存在するか
-    //orderレコードの有無
-    var order;
-    const or = Order.find({}, function(err, orderResult) {
-      if (err) throw err;
-      return orderResult; 
-    });
+		if (!order) { // カートなしの場合は新規作成
+			const newOrder = new Order({
+				user: loginUser._id,
+				paymentMethod: 0,
+				status: 0,
+			});
+			order = await Order.create(newOrder)
+				.then(data => {
+					return data;
+				})
+				.catch(err => {
+					console.error(err);
+					throw err;
+				});
+		} else {
+			// 同じ商品がある場合は数量のみ更新
+			const orderItemWithTheSameItem = order["orderItems"]
+				.filter(v => v.item.toString() === newOrderItem.item.toString())
 
-    if (or.length == []) {
-      order = 1;
-    } 
-    if (or.length != []) {
-      order = 2;
-    }
-    
-    
-    
-    
-    
-    //console.log(order);
-    //console.log('kkkkkkkkkk');
-    
-      
-      //カートが空
-      if (order = 1) {
-        //console.log('okkkkkkkkkkkkkkkkkkkkkkk');
-        
-        //新規にカート作成
-        //orderItemを作成
-        var newOrderItem = new OrderItem({
-          item: detailItem._id,
-          quantity: 1, 
-        });
-        console.log(newOrderItem);
-        //orderItemを保存・取得
-        newOrderItem.save((err) => {
-          if (err) throw err;
-          
-        });
-        //console.log('gggggggggggggggggggggggggggggggggggggggggggg');
-        //////////////////////////////ここまでは処理通る///////////////////////////
-        var orderItemId;
-        const s = OrderItem.find({},(err, orderItemresult) => {
-          if (err) throw err;
-          return orderItemresult;
-          //orderItemId = orderItemresult[0]._id;
-          //console.log(orderItemId);
-        });
-        //console.log(s);
-        //orderItemId = s._id;
-        //console.log('kkkkkkk');
-        //console.log(s[0]._id);
-        //console.log('kkkkkkk');
+			if (orderItemWithTheSameItem.length > 0) {
+				await OrderItem.findByIdAndUpdate(orderItemWithTheSameItem[0]["_id"],
+					{$inc: {quantity: newOrderItem.quantity}},
+					{new: true})
+					.then(data => {
+					})
+					.catch(err => {
+						console.error(err);
+						throw err;
+					});
+				return res.send("success : only quantity is updated");
+			}
+		}
 
-        ////////////////////orderItemIdが取得できない//////////////////////////////////
+		// orderItemの新規作成
+		const orderItem = await OrderItem.create(newOrderItem)
+			.then(data => {
+				return data;
+			})
+			.catch(err => {
+				console.error(err);
+				throw err;
+			});
 
+		// カートにリレーション追加
+		await Order.findByIdAndUpdate(order._id, {
+			$push: {orderItems: orderItem._id}
+		}).catch(err => {
+			console.error(err);
+			throw err;
+		})
+		res.send("success");
+	},
 
-        //商品金額算出用の関数が必要
-        //orderを作成
-
-        /* var user = new User({
-          firstName: req.firstName,
-          lastName: req.lastName,
-          email: req.password,
-          address: req.defaultAddress,        
-        });
-
-        var destinationAddress = new Address({
-          name: '1',
-        });
-
-        var orderItems = new OrderItem({
-        }); */
-
-        var newOrder = new Order({
-          //user: [],
-          orderItems: [{orderItemId}],
-          subtotal:1,
-          tax:1,
-          total:1,
-          orderDate: new Date().toLocaleString(),
-          //destinationAddress: [],
-          paymentMethod: 0,
-          status: 0,
-        }); 
-        //orderを保存
-        newOrder.save((err) => {
-          if (err) throw err;
-        });
-      }
-       //カートがある
-         if (order = 2) {
-        //カートに同じ商品が存在する
-        //var newItem = new Item(getItemParams(req.body));
-        const orr = OrderItem.find ({item: detailItem._id},(err, orderItemresult) => {
-          if (err) throw err;
-          return orderItemresult;
-        });
-          if(orr != null){
-            //orderItemを更新
-            OrderItem.update(
-              { quantity: orderItemresult[0].quantity},
-              { $set: { quantity:  orderItemresult[0].quantity+1 } },
-              function (err) {
-                if (err) throw err;
-              }
-            );
-          }
-            //カートに同じ商品が存在しない  
-            if (orr == null) {
-            //orderItemを新規作成  
-            var newOrderItem = new OrderItem ({
-              item: detailItem._id,
-              quantity: 1,
-            });
-            //orderItemを保存・取得
-            newOrderItem.save((err) => {
-              if (err) throw err;
-            });
-
-            const a = OrderItem.find({ item:  detailItem._id }, function (err, result) {
-              if (err) throw err;
-              return result;
-            });
-
-            //orderのorderItemsに新たなorderItemを追加して更新
-            
-            or.update(
-              { orderItems: or.orderItems },
-              { $set: { orderItems:  or.orderItems.push(a) } },
-              function(err) {
-                if (err) throw err;
-              }
-            );
-
-            }
-      }
-    
-    
-    res.render('./cart.ejs', {
-      //body: req.body,
-      body: [],
-      noCart: '',
-      cartIn: 'カートに追加',
-    });
-    
-  },
 }
