@@ -30,7 +30,8 @@
         <div>
         
         
-        <span><%= item.item.photoURL %>&nbsp;&nbsp;&nbsp;</span>
+        <img style="max-height: 6rem;" width="auto" 
+             src="./image/<%= item.item.photoURL %>">
         
         
         
@@ -43,7 +44,7 @@
         <!-- <button><strong></strong>－</strong></button> -->
         <!-- <input type="text" name="" id="" value="1" pattern="[0-9]"> -->
         <span>
-          &nbsp;&nbsp;&nbsp;<input type="number" name="num1" min="1" max="10" value="1" step="1" required>
+          &nbsp;&nbsp;&nbsp;<input type="number" name="num1" min="1" max="10" value="<%= item.quantity %>" step="1" required>
         </span>
         <!-- <button><strong>＋</strong></button> -->
         
