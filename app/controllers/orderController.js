@@ -21,42 +21,32 @@ module.exports = {
 	 index: async(req, res) => {
     
      var cart;
-     //var orderResult;
+     
      //カートなし
-     const order = Order.find({}, function(err, orderResult) {
-       //console.log(result.length == []);
+     const order = await Order.find({}, function(err, orderResult) {
        if (err) throw err;
        return orderResult;
-       //var orderResult;
-       
+    });
 
-     });
 
-     //console.log(order);
-
-      if (order) {
-        //console.log(order);
-        cart = 1;
-        //console.log('00000000000000');
-      }
-      //カートあり
+      //カートなし
       if (!order) {
-        //console.log(order);
-        cart = 2;
-        //console.log('00000000000000');
+        cart = 1;   
       }
-    
-     
+        
+      //カートあり
+      if (order) {
+        cart = 2;
+      }
     
      //カートなし
-     if (cart = 1) {
-        //console.log('ok');
+     if (cart != 2) {
         res.render('./cart.ejs', {
           noCart: 'カートに商品がありません',
           cartIn: '',
           body: [],
         });
-     }
+      }
       
       //カート商品あり
       if (cart = 2) {
@@ -65,32 +55,26 @@ module.exports = {
           if (err) throw err;
           return result;
         });
-
-        //orderItemの数だけorderItemとitemをjoinして取得
-        var orderItemLists;
-        newOrder.orderItems.forEach(orderItemId => {
-          const orderItem = OrderItem.find({_id : orderItemId})
-            .populate('type item.Item')
-            .exec(function(err, orderItemResult) {
-              if (err) throw err;
-              //orderItemLists = orderItemResult;
-              return orderItemResult;
-            });
-          orderItemLists = orderItem; 
+        
+        //orderItemの数だけorderItemとitemをjoinして取得  
+        OrderItem.find({_id : newOrder.orderItems})
+          .populate("item")
+          .exec(function(err, orderItemResult) {
+            if (err) throw err;           
+            var orderItemLists = orderItemResult;
+              
+            res.render('./cart.ejs',{
+              cartIn: '',
+              noCart: '',
+              body : orderItemLists,
+            });   
           });
-        
-        
       }
-     
-      
-      res.render('./cart.ejs',{
-        //var body = [],
-        body : orderItemsList,
-       
-      });
-    
+},
 
-    
+  //カート削除
+  delete: (req, res) => {
+     
   },
   
 
