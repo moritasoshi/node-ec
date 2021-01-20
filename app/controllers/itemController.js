@@ -1,31 +1,13 @@
 "use strict";
 
-//const { find } = require("../models/item");
-
-const Item = require("../models/item"),
-	getItemParams = body => {
-		return {
-			name: '1',
-			price: '1',
-			releaseDate: '1',
-			category: '1',
-			description: '1',
-			photoURL: '1'
-		};
-	}
-
+const Item = require("../models/item");
 
 module.exports = {
 	show: (req, res) => {
-		Item.find({_id: "60011c2e19a23bdda3b07d7c"}, function (err, result) {
+		const itemId = req.params._id;
+		Item.findById(itemId, function (err, result) {
 			if (err) throw err;
-
-			res.render('./detail.ejs', {
-				name: result[0].name,
-				price: result[0].price,
-				photoURL: result[0].photoURL,
-				description: result[0].description,
-			});
+			res.render('./detail.ejs', result);
 		});
 	},
 	itemList: async (req, res) => {
