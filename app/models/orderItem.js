@@ -1,18 +1,15 @@
 "use strict";
 
 const mongoose = require("mongoose"),
-  Schema = mongoose.Schema;
-  
+	Schema = mongoose.Schema;
+
 const OrderItem = new Schema(
-  {
-    _id: {
-      
-    },
-    item: {type: Schema.Types.ObjectId, ref: "Item"},
-    quantity: {
-      type: Number,
-    },
-  }
+	{
+		item: {type: Schema.Types.ObjectId, ref: "Item"},
+		quantity: {
+			type: Number,
+		},
+	}
 );
 
 module.exports = mongoose.model("OrderItem", OrderItem);
