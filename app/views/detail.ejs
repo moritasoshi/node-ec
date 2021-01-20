@@ -12,6 +12,7 @@
       <h1>商品詳細</h1>
     </div>
 
+    <form method="POST" action="/order/add">
     <div class="row">
       
       <div class="col">
@@ -20,18 +21,21 @@
       
       <div class="col">
         <p><%= name %></p>
-        <p><%= price %>円</p>
+        <p><%= price %></p>円
+        
         <!-- Ajax jquerry ライブラリ使用 -->
         <!-- <button><strong></strong>－</strong></button> -->
         <!-- <input type="text" name="" id="" value="1" pattern="[0-9]"> -->
-        <input type="number" name="num1" min="1" max="10" value="1" step="1" required>
+        <input type="number"  min="1" max="10" value="1" step="1" required>
         <!-- <button><strong>＋</strong></button> -->
         <br>
         <br>
-        <button>カートに追加する</button>
+        <input type="submit" value="カートに追加する">
         <hr>
         <p><%= description %></p>
+        <input type="hidden" name="_id" value="<%= _id %>">
       </div>
+      </form>  
 
     </div>
 

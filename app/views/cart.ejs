@@ -9,17 +9,22 @@
 <main role="main" class="container">
 
     <div class="border-bottom mt-5 mb-5">
-      <h1>あなたのカート</h1>
-      <% if (noCart != '') { %>
-        <h1>カートに商品がありません</h1> <% } %> 
+      
+      <% if (noCart == 'カートに商品がありません') { %>
+        <h1>カートに商品がありません</h1> 
+      <% } %>
+      <% if (cartIn == 'カートに追加') { %>
+        <h1>カートに商品を追加しました</h1>
+        <a href="/order">カートを見る</a> 
+      <% } %> 
     </div>
 
-    <% if (body != []) { %>
+    <% if (body == []) { %>
     <% body.forEach(function (value) { %>
 
     
     <div class="row">
-      
+      <h1>あなたのカート</h1>
       <div class="col">
           <p><%= value.photoURL %></p>
       </div>
