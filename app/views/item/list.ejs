@@ -13,13 +13,33 @@
 <main role="main" class="container">
 
     <% var items = locals.itemList || []; %>
+    <% var categories = locals.categoryList || []; %>
+    <% var orgs = locals.originals || []; %>
+
     <form>
         <div class="form-row">
-            <div class="form-group col-10">
+            <div class="form-group col-7">
                 <input type="text" class="form-control" name="name"
+                       value="<%= orgs.name %>"
                        placeholder="全ての商品を検索">
             </div>
-            <button type="submit" class="btn btn-primary mb-4">Submit</button>
+            <div class="form-group col-2">
+                <select class="form-control" id="exampleFormControlSelect1" name="category">
+                    <option value="">--カテゴリ--</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category %>" <%= orgs.category === category ? "selected" : "" %>><%= category %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="form-group col-2">
+                <select class="form-control" id="exampleFormControlSelect1" name="order">
+                    <option value="">--並び替え--</option>
+                    <option value="1" <%= orgs.order === "1" ? "selected" : "" %>>新着順</option>
+                    <option value="2" <%= orgs.order === "2" ? "selected" : "" %>>価格が安い順</option>
+                    <option value="3" <%= orgs.order === "3" ? "selected" : "" %>>価格が高い順</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mb-4">検索</button>
         </div>
     </form>
 
