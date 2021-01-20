@@ -5,6 +5,9 @@ const mongoose = require("mongoose"),
   
 const OrderItem = new Schema(
   {
+    _id: {
+      
+    },
     item: {type: Schema.Types.ObjectId, ref: "Item"},
     quantity: {
       type: Number,
