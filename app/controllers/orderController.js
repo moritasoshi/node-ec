@@ -40,7 +40,7 @@ const user = require("../models/user");
   
 
 module.exports = {
-  //カート中身画面表示
+   //カート中身画面表示
    
 	 index: async(req, res) => {
     
@@ -52,11 +52,7 @@ module.exports = {
        if (err) throw err;
        return orderResult;
        //var orderResult;
-       //console.log(orderResult1);
-       //orderResult11 = orderResult1;
-       //orderResult = 111;
-       //console.log(orderResult);
-      //order = 3;
+       
 
      });
 
@@ -67,24 +63,13 @@ module.exports = {
         cart = 1;
         //console.log('00000000000000');
       }
-      //カートあり、1種類
+      //カートあり
       if (!order) {
         //console.log(order);
         cart = 2;
         //console.log('00000000000000');
       }
-      //カートあり、2種類以上
-      /* if (orderResult[0].orderItems.length > 2) {
-        order = 3;
-      } */
     
-      //console.log(order);
-      //console.log('00000000000000');
-      //console.log(cart);
-
-     //var orderResult11;
-     //console.log(orderResult11);
-     
      
     
      //カートなし
@@ -96,33 +81,8 @@ module.exports = {
           body: [],
         });
      }
-
-     //カート商品1以上
-     /* if (order = 2) {
-        
-        OrderItem.find({_id : orderResult.orderItems})
-          .populate('type item.Item')
-          .exec(function(err, orderItemresult) {
-            if (err) throw err;
-            res.render('./cart.ejs',{
-              //var body = [],
-              body : orderItemresult,
-              
-              //photoURL: ItemResult.photoURL, 
-              //name: ItemResult.name,
-              //price: ItemResult.price,
-              //totalPrice: orderResult.total,
-            });
-          });
-          res.render('./cart.ejs',{
-            //var body = [],
-            body : orderItemsList,
-           
-          });
-          
-      } */ 
       
-      //カート商品2種類以上
+      //カート商品あり
       if (cart = 2) {
         //orderを取得
         const newOrder = await Order.findOne({}, function(err, result) {
