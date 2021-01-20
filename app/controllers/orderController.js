@@ -42,44 +42,53 @@ const user = require("../models/user");
 module.exports = {
   //カート中身画面表示
    
-	 index: (req, res) => {
+	 index: async(req, res) => {
     
-     var order;
-     var orderResult;
-     
-     Order.findOne({}, function(err, orderResult) {
+     var cart;
+     //var orderResult;
+     //カートなし
+     const order = Order.find({}, function(err, orderResult) {
        //console.log(result.length == []);
        if (err) throw err;
+       return orderResult;
        //var orderResult;
        //console.log(orderResult1);
        //orderResult11 = orderResult1;
        //orderResult = 111;
        //console.log(orderResult);
-       //カートなし
-       if (orderResult == []) {
-        order = 1;
+      //order = 3;
+
+     });
+
+     //console.log(order);
+
+      if (order) {
+        //console.log(order);
+        cart = 1;
+        //console.log('00000000000000');
       }
       //カートあり、1種類
-      if (orderResult.orderItems.length == 1) {
-        order = 2;
+      if (!order) {
+        //console.log(order);
+        cart = 2;
+        //console.log('00000000000000');
       }
       //カートあり、2種類以上
-      if (orderResult.orderItems.length > 2) {
+      /* if (orderResult[0].orderItems.length > 2) {
         order = 3;
-      }
+      } */
+    
+      //console.log(order);
+      //console.log('00000000000000');
+      //console.log(cart);
 
-
-
-
-      //console.log(orderResult);  
-     });
      //var orderResult11;
      //console.log(orderResult11);
-     //console.log('ooo');
+     
      
     
      //カートなし
-     if (order = 1) {
+     if (cart = 1) {
         //console.log('ok');
         res.render('./cart.ejs', {
           noCart: 'カートに商品がありません',
@@ -112,30 +121,26 @@ module.exports = {
           });
           
       } */ 
-
+      
       //カート商品2種類以上
-      if (order = 2 || 3) {
-        var orderResult1;
-        k;
-        Order.findOne({}, function(err, result) {
-          //var orderResult1;
-          orderResult1 = result;
-          //console.log(result);
-          k=3;
-          
+      if (cart = 2) {
+        //orderを取得
+        const newOrder = await Order.findOne({}, function(err, result) {
+          if (err) throw err;
+          return result;
         });
-        console.log(k);
-        //console.log(orderResult1);
-        
-        var orderItemsList = [];
-        //console.log(orderResult[0]);
-        orderResult.orderItems.forEach(itemId => {
-          OrderItem.find({_id : itemId})
+
+        //orderItemの数だけorderItemとitemをjoinして取得
+        var orderItemLists;
+        newOrder.orderItems.forEach(orderItemId => {
+          const orderItem = OrderItem.find({_id : orderItemId})
             .populate('type item.Item')
-            .exec(function(err, orderItemresult) {
+            .exec(function(err, orderItemResult) {
               if (err) throw err;
-              orderItemsList = orderItemresult;
-            }); 
+              //orderItemLists = orderItemResult;
+              return orderItemResult;
+            });
+          orderItemLists = orderItem; 
           });
         
         
@@ -153,57 +158,79 @@ module.exports = {
   },
   
   //カートに商品追加
-  add: (req, res) => {
+  add: async (req, res) => {
 
     //商品詳細IDから商品を取得
-    var newItem = new Item();
-    Item.find({ _id: req.body._id }, function(err, result) {
+    //var newItem = new Item();
+    const detailItem = await Item.find({ _id: req.body._id }, function(err, result) {
       if (err) throw err;
-      newItem = result;
+      return result;
+      //newItem = result;
       //console.log(newItem);
     });
+
+
     //カートが存在するか
     //orderレコードの有無
     var order;
-    Order.find({}, function(err, orderResult) {
+    const or = Order.find({}, function(err, orderResult) {
       if (err) throw err;
-      if (orderResult.length == []) {
-        order = 1;
-      } 
-      if (orderResult.length != []) {
-        order = 2;
-      }
-      console.log(orderResult);
-      //console.log(order);
+      return orderResult; 
     });
+
+    if (or.length == []) {
+      order = 1;
+    } 
+    if (or.length != []) {
+      order = 2;
+    }
+    
+    
+    
+    
+    
+    //console.log(order);
+    //console.log('kkkkkkkkkk');
     
       
       //カートが空
       if (order = 1) {
-        //console.log('ok');
+        //console.log('okkkkkkkkkkkkkkkkkkkkkkk');
         
         //新規にカート作成
         //orderItemを作成
         var newOrderItem = new OrderItem({
-          item: newItem._id,
+          item: detailItem._id,
           quantity: 1, 
         });
-        //console.log(newOrderItem);
+        console.log(newOrderItem);
         //orderItemを保存・取得
         newOrderItem.save((err) => {
           if (err) throw err;
+          
         });
+        //console.log('gggggggggggggggggggggggggggggggggggggggggggg');
+        //////////////////////////////ここまでは処理通る///////////////////////////
         var orderItemId;
-        OrderItem.find({},(err, orderItemresult) => {
+        const s = OrderItem.find({},(err, orderItemresult) => {
           if (err) throw err;
-          //console.log(orderItemresult[0]._id);
-          orderItemId = orderItemresult[0]._id;
+          return orderItemresult;
+          //orderItemId = orderItemresult[0]._id;
           //console.log(orderItemId);
         });
+        //console.log(s);
+        //orderItemId = s._id;
+        //console.log('kkkkkkk');
+        //console.log(s[0]._id);
+        //console.log('kkkkkkk');
+
+        ////////////////////orderItemIdが取得できない//////////////////////////////////
+
+
         //商品金額算出用の関数が必要
         //orderを作成
 
-        var user = new User({
+        /* var user = new User({
           firstName: req.firstName,
           lastName: req.lastName,
           email: req.password,
@@ -215,11 +242,11 @@ module.exports = {
         });
 
         var orderItems = new OrderItem({
-        });
+        }); */
 
         var newOrder = new Order({
           //user: [],
-          orderItems: {orderItemId},
+          orderItems: [{orderItemId}],
           subtotal:1,
           tax:1,
           total:1,
@@ -235,10 +262,13 @@ module.exports = {
       }
        //カートがある
          if (order = 2) {
-        //カートに同じ商品が存在するか
-        var newItem = new Item(getItemParams(req.body));
-        OrderItem.find ({item: newItem._id},(err, orderItemresult) => {
-          if(orderItemresult != null){
+        //カートに同じ商品が存在する
+        //var newItem = new Item(getItemParams(req.body));
+        const orr = OrderItem.find ({item: detailItem._id},(err, orderItemresult) => {
+          if (err) throw err;
+          return orderItemresult;
+        });
+          if(orr != null){
             //orderItemを更新
             OrderItem.update(
               { quantity: orderItemresult[0].quantity},
@@ -247,24 +277,35 @@ module.exports = {
                 if (err) throw err;
               }
             );
-            
-              
-            } else {
+          }
+            //カートに同じ商品が存在しない  
+            if (orr == null) {
             //orderItemを新規作成  
             var newOrderItem = new OrderItem ({
-              item: newItem._id,
+              item: detailItem._id,
               quantity: 1,
             });
+            //orderItemを保存・取得
             newOrderItem.save((err) => {
               if (err) throw err;
             });
 
-          }
+            const a = OrderItem.find({ item:  detailItem._id }, function (err, result) {
+              if (err) throw err;
+              return result;
+            });
 
+            //orderのorderItemsに新たなorderItemを追加して更新
+            
+            or.update(
+              { orderItems: or.orderItems },
+              { $set: { orderItems:  or.orderItems.push(a) } },
+              function(err) {
+                if (err) throw err;
+              }
+            );
 
-        });
-        
-
+            }
       }
     
     
