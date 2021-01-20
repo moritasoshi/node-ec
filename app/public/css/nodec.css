@@ -8,9 +8,11 @@
     border-bottom: #0b2e13 1px;
     border-top: #0b2e13 3px;
 }
+
 body > .container {
     padding: 30px 15px;
 }
+
 .container .text-muted {
     margin: 20px 0;
 }
@@ -18,4 +20,11 @@ body > .container {
 .footer > .container {
     padding-right: 15px;
     padding-left: 15px;
+}
+
+p.abridgement {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
 }
