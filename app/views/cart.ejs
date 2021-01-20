@@ -19,42 +19,52 @@
       <% } %> 
     </div>
 
-    <% if (body == []) { %>
-    <% body.forEach(function (value) { %>
 
     
-    <div class="row">
+    <% if (body != []) { %>
       <h1>あなたのカート</h1>
-      <div class="col">
-          <p><%= value.photoURL %></p>
-      </div>
+    <% body.forEach(function (item, index) { %>
+    
+    
       
-      <div class="col">
-        <p><%= value.name %></p>
-      </div>
+        
+        
+        
+        <span><%= item.item.photoURL %>&nbsp;&nbsp;&nbsp;</span>
+        
+        
+        
+        <span><%= item.item.name %>&nbsp;&nbsp;&nbsp;</span>
+        
       
       
-      <div class="col">
+        
         <!-- Ajax jquerry ライブラリ使用 -->
         <!-- <button><strong></strong>－</strong></button> -->
         <!-- <input type="text" name="" id="" value="1" pattern="[0-9]"> -->
-        <input type="number" name="num1" min="1" max="10" value="1" step="1" required>
+        <span>
+          &nbsp;&nbsp;&nbsp;<input type="number" name="num1" min="1" max="10" value="1" step="1" required>
+        </span>
         <!-- <button><strong>＋</strong></button> -->
-      </div>
-        <br>
-        <br>
-      <div class="col">
-        <p><%= value.price %>円</p>
-    　</div>
-      <div class="col">
-        <button>×</button>
-      </div>
-
-    </div>
+        
+      
+        
+        
+        <span>&nbsp;&nbsp;&nbsp;<%= item.item.price %>円</span>
+      　
+        
+        <span>
+          &nbsp;&nbsp;&nbsp;<button>×</button>
+        </span>
+        
+      
+      
+    
 
 
     <% }); %>
     <% } %>
+  
 
     <div class="row">
       <div class="col">
