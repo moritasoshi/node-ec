@@ -12,7 +12,7 @@ const Item = require("../models/item"),
 			description: '1',
 			photoURL: '1'
 		};
-	};
+	}
 
 
 module.exports = {
@@ -29,7 +29,13 @@ module.exports = {
 		});
 	},
 	itemList: async (req, res) => {
-		const itemList = await Item.find({}, (err, data) => {
+		const query = req.query;
+		console.log(query.name)
+
+		// 検索条件を生成
+		let filter = {}
+
+		const itemList = await Item.find(filter, (err, data) => {
 			if (err) throw err;
 			return data;
 		});
