@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+</head>
+
+<body>
+<main role="main" class="container">
+
+    <% var user = locals.userInfo || []; %>
+    <% var defaultAddress = user.defaultAddress || []; %>
+    <% var orders = locals.orders || []; %>
+
+    <div class="border-bottom mt-5 mb-5">
+        <h1>マイアカウント</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-7">
+            <h4>注文履歴</h4>
+            <% if(orders.length !== 0) { %>
+                <div class="card mb-3">
+                    <div class="card-header text-muted">
+                        <div class="row">
+                            <div class="col-4">注文日</div>
+                            <div class="col-4">合計</div>
+                            <div class="col-4">送付先</div>
+                        </div>
+                    </div>
+                    <% orders.orderItems.forEach(orderItem => { %>
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <div class="card-body">
+                                    <a href="/item/<%= orderItem.item._id %>">
+                                        <img alt="item image" class="embed-responsive-item"
+                                             height="90"
+                                             src="./image/<%= orderItem.item.photoURL %>"/>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="card-body">
+                                    <p class="abridgement">
+                                        <a href="/item/<%= orderItem.item._id %>"><%= orderItem.item.name %></a>
+                                    </p>
+                                    <p class="card-text"><small class="text-muted">¥<%= orderItem.item.price.toLocaleString() %> ×
+                                        ️<%= orderItem.quantity %></small></p>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-4">
+            <h4>アカウントの詳細</h4>
+            <% if(defaultAddress.length !== 0) { %>
+                <h5><%= defaultAddress.firstName %> <%= defaultAddress.lastName %></h5>
+                <p>〒<%= defaultAddress.zipCode %></p>
+                <p><%= defaultAddress.address %></p>
+                <p>電話番号:<%= defaultAddress.telephone %></p>
+            <% } %>
+            <a href="/account/address">住所を確認する(<%= user.addresses.length %>)</a>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>

@@ -6,6 +6,8 @@ const router = require("express").Router(),
 
 router.use("/address", authenticate.ensureAuthenticated ,addressRoutes);
 
+router.get("/", authenticate.ensureAuthenticated, userController.show);
+
 router.get("/register", userController.toRegister);
 router.post("/register", validate.validateUserRegister, userController.register, userController.toLogin);
 router.get("/login", userController.toLogin);
