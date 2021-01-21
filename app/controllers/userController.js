@@ -1,6 +1,8 @@
 "use strict";
 
 const User = require("../models/user"),
+	Order = require("../models/order"),
+	OrderItem = require("../models/orderItem"),
 	passport = require("passport"),
 	{validationResult} = require('express-validator'),
 	bcrypt = require('bcrypt'),
@@ -14,7 +16,51 @@ const User = require("../models/user"),
 		};
 	};
 
+async function populateItem(orderItems) {
+	let populated = [];
+	for (let orderItem of orderItems) {
+		const item = await OrderItem.findById(orderItem._id)
+			.populate("item");
+		populated.push(item);
+	}
+	return populated;
+};
+
 module.exports = {
+	show: async (req, res) => {
+		const loginUser = req.user;
+		// アカウント情報取得
+		let userInfo = await User.findById(loginUser._id, {password: 0})
+			.populate("defaultAddress")
+			.then(data => {
+				return data;
+			})
+			.catch(err => {
+				console.error(err);
+				throw err;
+			})
+		// 注文履歴を取得
+		let orders = await Order.findOne({user: loginUser._id})
+			.populate("orderItems")
+			.then(data => {
+				return data;
+			})
+			.catch(err => {
+				console.error(err);
+				throw err;
+			});
+		// itemをjoinした結果を取得
+		if (orders) {
+			orders.orderItems = await populateItem(orders.orderItems);
+		}
+
+		const locals = {
+			userInfo: userInfo,
+			orders: orders,
+		}
+		console.log(JSON.stringify(orders, null, "\t"));
+		res.render('./account/detail.ejs', locals);
+	},
 	toRegister: (req, res) => {
 		res.render('./account/register.ejs');
 	},
