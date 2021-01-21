@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+
 // 認証&セッション管理
 passport.use(new LocalStrategy({
 		usernameField: 'email',

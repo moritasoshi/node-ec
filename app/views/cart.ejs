@@ -4,20 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script>
+  
+
+  $(function() {
+ 
+ //セレクトボックスが切り替わったら発動
+ $('.userQuantity').change(function() {
+
+   //選択したvalue値を変数に格納
+   var val = $(this).val();
+
+   $('.realUserQuantity').val(val);
+   
+   //console.log($('.realUserQuantity').val());
+   //console.log($(this).val());
+   
+ });
+});
+
+
+
+
+
+ </script>
 
 <body>
 <main role="main" class="container">
 
     <div class="border-bottom mt-5 mb-5">
       
-      <% if (noCart == 'カートに商品がありません') { %>
-        <h1>カートに商品がありません</h1> 
-      <% } %>
-      <% if (cartIn == 'カートに追加') { %>
-        <h1>カートに商品を追加しました</h1>
-        <a href="/order">カートを見る</a> 
-      <% } %> 
+      
     </div>
+
+    <% if (body == []) { %>
+      <h1>カートに商品がありません</h1>
+    <% } %>
 
 
     
@@ -25,50 +51,53 @@
       <h1>あなたのカート</h1>
     <% body.forEach(function (item, index) { %>
     
-    
+    　　
       
-        <div>
+        <div class="row">
         
+        <div  class="col-xs-10 bg-primary">
+        <img style="max-height: 6rem;" width="auto" 
+             src="./image/<%= item.item.photoURL %>">
+        </div>
         
-        <span><%= item.item.photoURL %>&nbsp;&nbsp;&nbsp;</span>
+        <div  class="col">
+        <span><%= item.item.name %></span>
+        </div>
         
+        <div class="col">
+        <form action="/order/change" method="POST">
+        <input type="number" class="userQuantity" id="num1" min="1" max="10" value="<%= item.quantity %>" step="1" required>
+
+        <input type="hidden" name = "itemQuantity" class ="realUserQuantity" value="<%= item.quantity %>">
+        <input type="hidden" name = "orderItemId" value="<%= item._id %>">
         
+        <input type="submit" value="更新">
+        </form>
+        </div>
         
-        <span><%= item.item.name %>&nbsp;&nbsp;&nbsp;</span>
+        <span><%= item.item.price %>円</span>
+ 
+        <form action="/order/change" method="POST">    
+        <input type="hidden" name = "orderItemId" value="<%= item._id %>">
+        <button >×</button> 
+        </form>
         
-      
-      
-        
-        <!-- Ajax jquerry ライブラリ使用 -->
-        <!-- <button><strong></strong>－</strong></button> -->
-        <!-- <input type="text" name="" id="" value="1" pattern="[0-9]"> -->
-        <span>
-          &nbsp;&nbsp;&nbsp;<input type="number" name="num1" min="1" max="10" value="1" step="1" required>
-        </span>
-        <!-- <button><strong>＋</strong></button> -->
-        
-      
-        
-        
-        <span>&nbsp;&nbsp;&nbsp;<%= item.item.price %>円</span>
-      　
-        
-        <span>
-          &nbsp;&nbsp;&nbsp;<button>×</button>
-        </span>
-        
-      
-      
     
       </div>
 
+      
+
     <% }); %>
     <% } %>
+
+
+   
   
 
     <div class="row">
       <div class="col">
         <span>合計金額</span>
+        <span><%= total %></span>円
       </div>
     </div>
 
@@ -80,4 +109,6 @@
 
 </main>
 </body>
+
+
 </html>
