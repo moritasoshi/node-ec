@@ -42,13 +42,14 @@ module.exports = {
       }
     
      //カートなし
-     if (cart != 2) {
+     /* if (cart = 1) {
         res.render('./cart.ejs', {
           noCart: 'カートに商品がありません',
+          body: [],
+          total: [],
           //cartIn: '',
-          //body: [],
         });
-      }
+      } */
       
       //カート商品あり
       if (cart = 2) {
@@ -75,9 +76,13 @@ module.exports = {
             const orderSubtotal = new Order({
               subTotal : total
             });
-            orderSubtotal.save(
-            function(err) {
-              if (err) throw err;
+            //subtotalあるときは更新ないときは挿入
+            /////////////////////////////////////
+            Order.findByIdAndUpdate(newOrder._id,{ 
+              $push: { subTotal: total } 
+            }).catch(err => {
+              console.error(err);
+              throw err;
             })
             res.render('./cart.ejs',{
               //cartIn: '',
@@ -91,25 +96,56 @@ module.exports = {
 
   //カート数量変更
   change: async(req, res) => {
+
+    //更新・削除前のorderItemを取得
+    const preOrderItem = await OrderItem.findById(
+      req.body.orderItemId,
+      function (err, result) {
+        if (err) throw err;
+        return result;
+      }
+    )
+    
     //削除
     if (req.body.itemQuantity == null) {
-      //console.log(req.body.itemQuantity);
-
-
+      //orderItemを削除
+      OrderItem.remove({ _id: req.body.orderItemId }, 
+        function(err) {
+          if (err) throw err;
+        })
+      //更新前のorderを取得
+      const preOrder = await Order.find({},
+        function (err, result) {
+          if (err) throw err;
+          return result;
+        })
+      //orderのorderItems[]１つ削除(新たなorderに更新)
+      var afterDeleteOrderItems;
+      
+      ////////////////////////////////////////////////////
+      preOrder[0].orderItems.forEach((orderItemId, index) => {
+        if (orderItemId.toString() === preOrderItem._id.toString()) {
+          preOrder[0].orderItems.splice(index, 1);
+        }
+      });
+      afterDeleteOrderItems = preOrder[0].orderItems;
+      console.log(afterDeleteOrderItems);
+      Order.update(
+        { _id: preOrder._id },
+        { $set: { orderItems: afterDeleteOrderItems } },
+        function (err) {
+          if (err) throw err;
+        }
+        )
+        
+        res.redirect('/order');
     }
 
 
     //数量変更
     if (req.body.itemQuantity != null) {
 
-      //更新前のorderItemを取得
-      const preOrderItem = await OrderItem.findById(
-        req.body.orderItemId,
-        function (err, result) {
-          if (err) throw err;
-          return result;
-        }
-      )
+      
       //orderItemを更新
       await OrderItem.update(
         { _id: preOrderItem._id },
@@ -118,14 +154,10 @@ module.exports = {
           if (err) throw err;
         }
       )
-      
 
       res.redirect('/order');
       
     }
-
-
-
 
 
   },
@@ -177,7 +209,7 @@ module.exports = {
 						console.error(err);
 						throw err;
 					});
-				return res.send("success : only quantity is updated");
+				return res.redirect("/order");
 			}
 		}
 
@@ -198,7 +230,7 @@ module.exports = {
 			console.error(err);
 			throw err;
 		})
-		res.send("success");
+		res.redirect("/order");
 	},
 
 }
