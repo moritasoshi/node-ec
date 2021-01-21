@@ -1,5 +1,7 @@
 "use strict";
 
+const { body } = require("express-validator");
+
 const Order = require("../models/order"),
 	OrderItem = require("../models/orderItem"),
 	Item = require("../models/item"),
@@ -43,8 +45,8 @@ module.exports = {
      if (cart != 2) {
         res.render('./cart.ejs', {
           noCart: 'カートに商品がありません',
-          cartIn: '',
-          body: [],
+          //cartIn: '',
+          //body: [],
         });
       }
       
@@ -57,24 +59,75 @@ module.exports = {
         });
         
         //orderItemの数だけorderItemとitemをjoinして取得  
-        OrderItem.find({_id : newOrder.orderItems})
+        await OrderItem.find({_id : newOrder.orderItems})
           .populate("item")
           .exec(function(err, orderItemResult) {
             if (err) throw err;           
-            var orderItemLists = orderItemResult;
-              
+            //return orderItemResult;
+            //金額算出
+            var total = 0;
+            orderItemResult.forEach(orderItem => {
+              var nowTotal;
+              nowTotal = orderItem.quantity * orderItem.item.price;
+              total = total + nowTotal;
+            });
+            //orderのsubtotalに保存
+            const orderSubtotal = new Order({
+              subTotal : total
+            });
+            orderSubtotal.save(
+            function(err) {
+              if (err) throw err;
+            })
             res.render('./cart.ejs',{
-              cartIn: '',
-              noCart: '',
-              body : orderItemLists,
+              //cartIn: '',
+              //noCart: '',
+              body : orderItemResult,
+              total : total,
             });   
           });
       }
-},
+　},
 
-  //カート削除
-  delete: (req, res) => {
-     
+  //カート数量変更
+  change: async(req, res) => {
+    //削除
+    if (req.body.itemQuantity == null) {
+      //console.log(req.body.itemQuantity);
+
+
+    }
+
+
+    //数量変更
+    if (req.body.itemQuantity != null) {
+
+      //更新前のorderItemを取得
+      const preOrderItem = await OrderItem.findById(
+        req.body.orderItemId,
+        function (err, result) {
+          if (err) throw err;
+          return result;
+        }
+      )
+      //orderItemを更新
+      await OrderItem.update(
+        { _id: preOrderItem._id },
+        { $set: { quantity: req.body.itemQuantity } },
+        function(err) {
+          if (err) throw err;
+        }
+      )
+      
+
+      res.redirect('/order');
+      
+    }
+
+
+
+
+
   },
   
 
