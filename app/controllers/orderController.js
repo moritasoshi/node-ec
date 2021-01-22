@@ -72,14 +72,9 @@ module.exports = {
               nowTotal = orderItem.quantity * orderItem.item.price;
               total = total + nowTotal;
             });
-            //orderのsubtotalに保存
-            const orderSubtotal = new Order({
-              subTotal : total
-            });
-            //subtotalあるときは更新ないときは挿入
-            /////////////////////////////////////
-            Order.findByIdAndUpdate(newOrder._id,{ 
-              $push: { subTotal: total } 
+            //orderのsubtotalを更新
+            Order.findByIdAndUpdate(newOrder._id,{
+              $set: { subTotal: total } 
             }).catch(err => {
               console.error(err);
               throw err;
@@ -120,18 +115,24 @@ module.exports = {
           return result;
         })
       //orderのorderItems[]１つ削除(新たなorderに更新)
-      var afterDeleteOrderItems;
+      //var afterDeleteOrderItems;
       
       ////////////////////////////////////////////////////
-      preOrder[0].orderItems.forEach((orderItemId, index) => {
+      /* preOrder[0].orderItems.forEach((orderItemId, index) => {
         if (orderItemId.toString() === preOrderItem._id.toString()) {
           preOrder[0].orderItems.splice(index, 1);
         }
-      });
-      afterDeleteOrderItems = preOrder[0].orderItems;
-      console.log(afterDeleteOrderItems);
+      }); */
+      //console.log(preOrder[0].orderItems);
+      //console.log(preOrderItem._id);
+      const afterDeleteOrderItems = preOrder[0].orderItems
+        .filter(v => v.toString() != preOrderItem._id.toString())
+      //afterDeleteOrderItems = preOrder[0].orderItems;
+
+      //console.log(afterDeleteOrderItems);
+      //console.log(afterDeleteOrderItems[0]);
       Order.update(
-        { _id: preOrder._id },
+        { _id: preOrder[0]._id },
         { $set: { orderItems: afterDeleteOrderItems } },
         function (err) {
           if (err) throw err;
@@ -184,7 +185,8 @@ module.exports = {
 			const newOrder = new Order({
 				user: loginUser._id,
 				paymentMethod: 0,
-				status: 0,
+        status: 0,
+        subTotal: 0,
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
