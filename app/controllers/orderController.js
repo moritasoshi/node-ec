@@ -265,7 +265,7 @@ module.exports = {
             Order.find({})
               .populate("destinationAddress")
               .exec(function(err, destinationAddressResult) {
-                console.log(destinationAddressResult);
+                //console.log(destinationAddressResult);
 
                 res.render("./orderConfirm.ejs", {
                   body: orderItemResult,

@@ -36,10 +36,10 @@
 <body>
 <main role="main" class="container">
 
-    <div class="border-bottom mt-5 mb-5">
+    <!-- <div class="border-bottom mt-5 mb-5">
       
       
-    </div>
+    </div> -->
 
     <% if (body == []) { %>
       <h1>カートに商品がありません</h1>
@@ -55,16 +55,20 @@
       
         <div class="row">
         
-        <div  class="col-xs-10 bg-primary">
+        <div class="col">
+        
+        <!-- <div class="row"> -->
         <img style="max-height: 6rem;" width="auto" 
              src="./image/<%= item.item.photoURL %>">
-        </div>
+        <!-- </div> -->
         
-        <div  class="col">
+        
+        <!-- <div class=""> -->
         <span><%= item.item.name %></span>
-        </div>
+        <!-- </div> -->
         
-        <div class="col">
+        
+        <!-- <div class="col"> -->
         <form action="/order/change" method="POST">
         <input type="number" class="userQuantity" id="num1" min="1" max="10" value="<%= item.quantity %>" step="1" required>
 
@@ -73,13 +77,16 @@
         
         <input type="submit" value="更新">
         </form>
-        </div>
+        <!-- </div> -->
         
+        <!-- <div class="col"> -->
         <span><%= item.item.price %>円</span>
- 
+        <!-- </div> -->
+        </div>
+
         <form action="/order/change" method="POST">    
         <input type="hidden" name = "orderItemId" value="<%= item._id %>">
-        <button >×</button> 
+        <button>×</button> 
         </form>
         
     
@@ -106,11 +113,14 @@
       <a href="/">買い物に戻る</a>
     </div>
 
+    <form action="/order/confirm" method="POST">
     <div class="row">
       <div class="col">
-        <button>ご購入手続きへ</button>
+        <input type="hidden" name="body" value="<%= body %>">
+        <input type="submit" value="ご購入手続きへ">
       </div>
     </div>
+    </form>
 
 </main>
 </body>

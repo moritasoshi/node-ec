@@ -19,10 +19,15 @@
     </div>
 
     <div class="row">
+      <% body.forEach(function (item, index) { %> 
       <div class="col">
-        <span>商品画像</span>
-        <span>商品名前</span>
+        <img style="max-height: 6rem;" width="auto" 
+             src="./image/<%= item.item.photoURL %>">
+        <span><%= item.item.name %></span>
+        <span><%= item.item.price %>円</span>
+        <span>×<%= item.quantity %></span>
       </div>
+      <% }); %>
       <div class="col">
       </div>
     </div>
@@ -33,24 +38,32 @@
     
 
     <div class="row">
-      <div class="col"><strong>送付先の住所</strong></div>
+      <div class="col"><strong><!-- 送付先の住所 --></strong></div>
       <div class="col">
-        <div>小計111</div>
-        <span>税金</span>111
+        <div>小計<%= subTotal %>円</div>
+        <span>税金</span><%= tax %>円
         <hr>
-        <div>合計金額1111</div>
+        <div>合計金額<%= total %>円</div>
+      </div>
+    </div>
+
+    <br>
+    <strong>送付先住所</strong>
+    <div class="row">
+      <div class="col">
+        <span><%= address.firstName + address.lastName %></span>
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <span>ユーザ名前</span>
+        <span><%= address.zipcode %></span>
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <span>ユーザ住所</span>
+        <span><%= address.address %></span>
       </div>
     </div>
     
