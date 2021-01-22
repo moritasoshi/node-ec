@@ -82,7 +82,7 @@ module.exports = {
             res.render('./cart.ejs',{
               //cartIn: '',
               //noCart: '',
-              body : orderItemResult,
+              orderItemResult : orderItemResult,
               total : total,
             });   
           });
@@ -156,11 +156,8 @@ module.exports = {
         }
       )
 
-      res.redirect('/order');
-      
+      res.redirect('/order'); 
     }
-
-
   },
   
 
@@ -268,14 +265,12 @@ module.exports = {
                 //console.log(destinationAddressResult);
 
                 res.render("./orderConfirm.ejs", {
-                  body: orderItemResult,
+                  orderItemResult: orderItemResult,
                   user: orderResult[0].user,
                   subTotal: orderResult[0].subTotal,
                   tax: tax,
                   total: total,
                   address: destinationAddressResult[0].destinationAddress,
-
-
 
               })
             
@@ -286,6 +281,22 @@ module.exports = {
 
 
     
+  },
+
+  //注文確定する
+  determine: (req, res) => {
+
+    //orderのステータスを更新
+    Order.update(
+      { $set: { status: 1 } },
+      function(err) {
+        if (err) throw err;
+      }
+    )
+      
+    res.render("./orderFinished.ejs", {
+      
+    })
   },
 
 }

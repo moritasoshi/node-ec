@@ -8,6 +8,7 @@ router.get("/", orderController.index);
 router.post("/add", authenticate.ensureAuthenticated, orderController.add);
 router.post("/change", orderController.change);
 router.post("/confirm", orderController.confirm);
+router.post("/determine", orderController.determine);
 
 
 

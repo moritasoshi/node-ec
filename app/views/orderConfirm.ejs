@@ -18,8 +18,9 @@
       <div class="col"><strong>注文確認</strong></div>
     </div>
 
+    <form method="POST" action="/order/determine">
     <div class="row">
-      <% body.forEach(function (item, index) { %> 
+      <% orderItemResult.forEach(function (item, index) { %> 
       <div class="col">
         <img style="max-height: 6rem;" width="auto" 
              src="./image/<%= item.item.photoURL %>">
@@ -83,20 +84,20 @@
 
     <div class="row">
       <div class="col">
-        <input type="checkbox" value="credit">クレジットカード
+        <input type="checkbox" id='credit' name="credit" value="credit"><label for="credit">クレジットカード</label>
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <input type="checkbox" value="cash">代金引換
+        <input type="checkbox" id='cash' name="cash" value="cash"><label for="1">代金引換</label>
       </div>
       <div class="col">
         <input type="submit" value="注文を確定する">
       </div>
     </div>
     
-
+    </form>
   
 
     
