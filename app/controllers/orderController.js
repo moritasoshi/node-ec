@@ -179,14 +179,22 @@ module.exports = {
 			.catch(err => {
 				console.error(err);
 				throw err;
-			});
-
+      });
+      
+      ///とりあえず目的地アドレスに登録しとく///
+      const destinationAddress = await Address.findOne({}, function
+        (err, result) {
+          return result;
+        })
+      console.log(destinationAddress);
+      console.log('wwwwwwwwwwwwwwwww');
 		if (!order) { // カートなしの場合は新規作成
 			const newOrder = new Order({
 				user: loginUser._id,
 				paymentMethod: 0,
         status: 0,
         subTotal: 0,
+        destinationAddress: destinationAddress._id,
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
@@ -237,12 +245,47 @@ module.exports = {
   
   //注文確認画面表示
   confirm: async (req, res) => {
+    //orderを取得
+    await Order.find({})
+      .populate("user")
+      .exec(function(err, orderResult) {
+        if (err) throw err;
+        //orderItem、itemを取得
+        OrderItem.find({ _id: orderResult[0].orderItems })
+          .populate("item")
+          .exec(function(err, orderItemResult) {
+            if (err) throw err;
+            //console.log(orderItemResult);
+            //商品合計金額算出
+            var total;
+            var tax;
+            total = Math.floor(orderResult[0].subTotal * 1.1);
+            tax = Math.floor(orderResult[0].subTotal * 0.1);
+            //destinationAddressを取得
+            Order.find({})
+              .populate("destinationAddress")
+              .exec(function(err, destinationAddressResult) {
+                console.log(destinationAddressResult);
+
+                res.render("./orderConfirm.ejs", {
+                  body: orderItemResult,
+                  user: orderResult[0].user,
+                  subTotal: orderResult[0].subTotal,
+                  tax: tax,
+                  total: total,
+                  address: destinationAddressResult[0].destinationAddress,
+
+
+
+              })
+            
+            });
+          })
+        
+      })
+
 
     
-
-    res.render("./orderConfirm.ejs", {
-      //
-    });
   },
 
 }
