@@ -1,6 +1,7 @@
 "use strict";
 
-const Item = require("../models/item");
+const Item = require("../models/item"),
+	itemsPerPage = 8;
 
 module.exports = {
 	show: (req, res) => {
@@ -12,6 +13,7 @@ module.exports = {
 	},
 	itemList: async (req, res) => {
 		const query = req.query;
+
 		// カテゴリー一覧を取得
 		let categoryList = await Item
 			.find({}, {"_id": 0, "category": 1}, (err, data) => {
@@ -40,10 +42,24 @@ module.exports = {
 		}
 		const sort = sortGenerate(query.order);
 
+		// ページの処理
+		const total = await Item.find(filter).count();
+		const totalPage = Math.ceil( total/itemsPerPage );
+		let page = query.page;
+		if (!page || page <= 0) {
+			page = 1;
+		} else if (page > totalPage) {
+			page = totalPage;
+		}
+		page = parseInt(page)
+		const skipCount = (page - 1) * itemsPerPage;
+
 		// 商品検索
 		const itemList = await Item
 			.find(filter)
 			.sort(sort)
+			.skip(skipCount)
+			.limit(itemsPerPage)
 			.then(data => {
 				return data
 			})
@@ -53,6 +69,8 @@ module.exports = {
 
 		const locals = {
 			itemList: itemList,
+			totalPage: totalPage,
+			currentPage: page,
 			categoryList: categoryList,
 			originals: query
 		}
