@@ -72,14 +72,9 @@ module.exports = {
               nowTotal = orderItem.quantity * orderItem.item.price;
               total = total + nowTotal;
             });
-            //orderのsubtotalに保存
-            const orderSubtotal = new Order({
-              subTotal : total
-            });
-            //subtotalあるときは更新ないときは挿入
-            /////////////////////////////////////
-            Order.findByIdAndUpdate(newOrder._id,{ 
-              $push: { subTotal: total } 
+            //orderのsubtotalを更新
+            Order.findByIdAndUpdate(newOrder._id,{
+              $set: { subTotal: total } 
             }).catch(err => {
               console.error(err);
               throw err;
@@ -184,7 +179,8 @@ module.exports = {
 			const newOrder = new Order({
 				user: loginUser._id,
 				paymentMethod: 0,
-				status: 0,
+        status: 0,
+        subTotal: 0,
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
