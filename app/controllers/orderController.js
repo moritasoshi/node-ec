@@ -115,18 +115,24 @@ module.exports = {
           return result;
         })
       //orderのorderItems[]１つ削除(新たなorderに更新)
-      var afterDeleteOrderItems;
+      //var afterDeleteOrderItems;
       
       ////////////////////////////////////////////////////
-      preOrder[0].orderItems.forEach((orderItemId, index) => {
+      /* preOrder[0].orderItems.forEach((orderItemId, index) => {
         if (orderItemId.toString() === preOrderItem._id.toString()) {
           preOrder[0].orderItems.splice(index, 1);
         }
-      });
-      afterDeleteOrderItems = preOrder[0].orderItems;
-      console.log(afterDeleteOrderItems);
+      }); */
+      //console.log(preOrder[0].orderItems);
+      //console.log(preOrderItem._id);
+      const afterDeleteOrderItems = preOrder[0].orderItems
+        .filter(v => v.toString() != preOrderItem._id.toString())
+      //afterDeleteOrderItems = preOrder[0].orderItems;
+
+      //console.log(afterDeleteOrderItems);
+      //console.log(afterDeleteOrderItems[0]);
       Order.update(
-        { _id: preOrder._id },
+        { _id: preOrder[0]._id },
         { $set: { orderItems: afterDeleteOrderItems } },
         function (err) {
           if (err) throw err;
