@@ -7,6 +7,7 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet" href="/css/nodec.css">
 
 <script>
   
@@ -21,106 +22,106 @@
 
    $('.realUserQuantity').val(val);
    
-   //console.log($('.realUserQuantity').val());
-   //console.log($(this).val());
    
  });
 });
 
-
-
-
-
- </script>
+</script>
 
 <body>
 <main role="main" class="container">
 
-    <!-- <div class="border-bottom mt-5 mb-5">
-      
-      
+    <!-- <div class="border-bottom mt-5 mb-5">    
     </div> -->
 
-    <% if (body == []) { %>
+    <% if (orderItemResult == []) { %>
       <h1>カートに商品がありません</h1>
     <% } %>
 
 
     
-    <% if (body != []) { %>
-      <h1>あなたのカート</h1>
-    <% body.forEach(function (item, index) { %>
-    
+    <% if (orderItemResult != []) { %>
+      
+    <h1>あなたのカート</h1>
+    <a href="/">買い物に戻る</a>
+      
+    <br><br>
+    <% orderItemResult.forEach(function (item, index) { %>
+      
     　　
       
         <div class="row">
         
-        <div class="col">
-        
-        <!-- <div class="row"> -->
-        <img style="max-height: 6rem;" width="auto" 
+          <div class="col">
+            <img style="max-height: 6rem;" width="auto" 
              src="./image/<%= item.item.photoURL %>">
-        <!-- </div> -->
+          </div>
         
         
-        <!-- <div class=""> -->
-        <span><%= item.item.name %></span>
-        <!-- </div> -->
+          <div class="col">
+            <span><%= item.item.name %></span>
+          </div>
         
         
-        <!-- <div class="col"> -->
-        <form action="/order/change" method="POST">
-        <input type="number" class="userQuantity" id="num1" min="1" max="10" value="<%= item.quantity %>" step="1" required>
-
-        <input type="hidden" name = "itemQuantity" class ="realUserQuantity" value="<%= item.quantity %>">
-        <input type="hidden" name = "orderItemId" value="<%= item._id %>">
+          <div class="col">
+            <form action="/order/change" method="POST">
+              <input type="number" class="userQuantity" id="num1" min="1" max="10" value="<%= item.quantity %>" step="1" required>
+              <input type="hidden" name = "itemQuantity" class ="realUserQuantity" value="<%= item.quantity %>">
+              <input type="hidden" name = "orderItemId" value="<%= item._id %>">
+              &nbsp;
+              <input type="submit" class="btn btn-primary" value="更新">
+              
+              
+            </form>
+          </div>
         
-        <input type="submit" value="更新">
-        </form>
-        <!-- </div> -->
+          <div class="col">
+            <span><%= item.item.price.toLocaleString() %>円</span>
+          </div>
         
-        <!-- <div class="col"> -->
-        <span><%= item.item.price %>円</span>
-        <!-- </div> -->
+          <div class="col">
+            <form action="/order/change" method="POST">    
+              <input type="hidden" name = "orderItemId" value="<%= item._id %>">
+              <button class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;">✖</button> 
+            </form>
+          </div>
+      
         </div>
-
-        <form action="/order/change" method="POST">    
-        <input type="hidden" name = "orderItemId" value="<%= item._id %>">
-        <button>×</button> 
-        </form>
-        
-    
-      </div>
+      
 
       
 
     <% }); %>
+    
     <% } %>
 
 
-   
+    
   
-
-    <div class="row">
+    <% if (orderItemResult != []) { %>
+    <div class="row float-right">
       <div class="col">
         <span>合計金額</span>
-        <span><%= total %></span>円
+        <span><%= total.toLocaleString() %></span>円
+        <!-- <div class="col"> -->
+      </div>
+        <div class="col">
+        <form action="/order/confirm" method="POST">
+          <input type="hidden" name="orderItemResult" value="<%= orderItemResult %>">
+          <input type="submit" class="btn btn-primary" value="ご購入手続きへ">
+        </form>
+      </div>
       </div>
     </div>
+   
+
+    
+    
+    <% } %>
 
 
-    <div>
-      <a href="/">買い物に戻る</a>
-    </div>
+    
 
-    <form action="/order/confirm" method="POST">
-    <div class="row">
-      <div class="col">
-        <input type="hidden" name="body" value="<%= body %>">
-        <input type="submit" value="ご購入手続きへ">
-      </div>
-    </div>
-    </form>
 
 </main>
 </body>
