@@ -233,6 +233,16 @@ module.exports = {
 			throw err;
 		})
 		res.redirect("/order");
-	},
+  },
+  
+  //注文確認画面表示
+  confirm: async (req, res) => {
+
+    
+
+    res.render("./orderConfirm.ejs", {
+      //
+    });
+  },
 
 }
