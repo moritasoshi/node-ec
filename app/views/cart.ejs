@@ -11,22 +11,76 @@
 
 <script>
   
-
+  //document.getElementById("update").style.display ="none";
+  
   $(function() {
- 
- //セレクトボックスが切り替わったら発動
- $('.userQuantity').change(function() {
-
-   //選択したvalue値を変数に格納
-   var val = $(this).val();
-
-   $('.realUserQuantity').val(val);
    
-   
- });
-});
+   //セレクトボックスが切り替わったら発動
+   $('.userQuantity').change(function() {
+     //更新ボタンの表示非表示切り替え
 
-</script>
+     //console.log($(this).next());
+     //$('#update').style.display;
+     //$(this).next().next().next().style.display = "block";
+     $(this).next().next().next().next().css("display", "block");
+     //$("#pinkBox").css("display", "none");
+     //document.getElementsByClassName("update").display ="block";
+     //console.log(document.getElementsByClassName("update"));
+
+     //選択したvalue値を変数に格納
+     var val = $(this).val();
+     $('.realUserQuantity').val(val);
+
+     var a = $(this).next().val();
+     //console.log(a);
+     
+     /* check() {
+       
+     } */
+
+     //$(this).next();
+
+     //$(this).parents('.aaaa').find('.userQuantity').next();
+
+
+     /* if ($(this).next().val() != $(this).parents('.aaaa').find('.userQuantity').next().val()) {
+       console.log('oooo');
+     } */
+     
+     $('.userQuantity').mouseover(function() {
+      //var result = confirm('数量変更した商品を更新しますか?');
+      //console.log(($(this).next().val()));
+      //console.log($(this).parents('.aaaa').find('.userQuantity').next().val());
+      //console.log(a);
+
+      if ($(this).next().val() != a) {
+        confirm('数量変更してください!!!');
+      } 
+        
+      
+
+      //confirm('数量変更した商品を更新してください');
+ /*      if (result) {
+        //フォーム送信したいけどできていない
+        //location.reload();
+        //document.myForm.updat
+        //$('myForm.updat').addEventListener('click', function() {
+        $('updat').submit();
+        //})
+      } else {
+        location.reload();
+      } */
+     });
+     
+     
+   });
+  });
+
+
+  
+  
+  </script>
+
 
 <body>
 <main role="main" class="container">
@@ -46,11 +100,12 @@
     <a href="/">買い物に戻る</a>
       
     <br><br>
+    <div class="aaaa">
     <% orderItemResult.forEach(function (item, index) { %>
       
     　　
       
-        <div class="row">
+        <div class="row aaa">
         
           <div class="col">
             <img style="max-height: 6rem;" width="auto" 
@@ -64,13 +119,16 @@
         
         
           <div class="col">
-            <form action="/order/change" method="POST">
-              <input type="number" class="userQuantity" id="num1" min="1" max="10" value="<%= item.quantity %>" step="1" required>
+            <form action="/order/change" method="POST" name="myForm">
+              <!-- <span></span> -->
+              <input type="number" class="userQuantity" min="1" max="10" value="<%= item.quantity %>" step="1" required>
+              <input type="hidden" value="<%= index %>">
               <input type="hidden" name = "itemQuantity" class ="realUserQuantity" value="<%= item.quantity %>">
               <input type="hidden" name = "orderItemId" value="<%= item._id %>">
-              &nbsp;
-              <!-- <input type="submit" class="btn btn-primary" value="更新"> -->
-              <button class="btn btn-primary">更新</button>
+              <!-- &nbsp; -->
+              
+              <!-- <input class="update btn btn-primary" type="submit" value="更新"> -->
+              <button class="update btn btn-primary" >更新</button>
               
               
             </form>
@@ -89,11 +147,12 @@
       
         </div>
       
+      
 
       
 
     <% }); %>
-    
+  </div>
     <% } %>
 
 
