@@ -54,7 +54,13 @@
       //console.log(a);
 
       if ($(this).next().val() != a) {
-        confirm('数量変更してください!!!');
+        result = confirm('数量が変更されている商品があります ! 更新してください !');
+        if (result) {
+          ////フォーム送信できるといいな
+        } else {
+          location.reload();
+        }
+
       } 
         
       
@@ -70,6 +76,8 @@
       } else {
         location.reload();
       } */
+
+
      });
      
      
