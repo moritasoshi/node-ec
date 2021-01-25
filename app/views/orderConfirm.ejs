@@ -8,23 +8,18 @@
 <body>
 <main role="main" class="container">
 
-    <!-- <div class="border-bottom mt-5 mb-5">
-        <h1>注文確認</h1>
-    </div> -->
-
-   
 
     <div class="row">
       <div class="col"><strong>注文確認</strong></div>
-    </div>
+    </div><br>
 
     <form method="POST" action="/order/determine">
     <div class="row">
       <% orderItemResult.forEach(function (item, index) { %> 
       <div class="col">
-        <img style="max-height: 6rem;" width="auto" 
-             src="./image/<%= item.item.photoURL %>">
-        <span><%= item.item.name %></span>
+        <img style="max-height: 3rem;" width="auto" 
+             src="/image/<%= item.item.photoURL %>"><br>
+        <span><%= item.item.name %></span><br>
         <span><%= item.item.price %>円</span>
         <span>×<%= item.quantity %></span>
       </div>
@@ -39,34 +34,21 @@
     
 
     <div class="row">
-      <div class="col"><strong><!-- 送付先の住所 --></strong></div>
       <div class="col">
-        <div>小計<%= subTotal %>円</div>
-        <span>税金</span><%= tax %>円
-        <hr>
-        <div>合計金額<%= total %>円</div>
-      </div>
-    </div>
-
-    <br>
-    <strong>送付先住所</strong>
-    <div class="row">
-      <div class="col">
+        <strong>送付先住所</strong><br>
+        <span><%= address.zipcode %></span><br>
+        <span><%= address.address %></span><br>
         <span><%= address.firstName + address.lastName %></span>
       </div>
-    </div>
-
-    <div class="row">
       <div class="col">
-        <span><%= address.zipcode %></span>
+        <div>小計 :               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= subTotal.toLocaleString() %>&nbsp;&nbsp;円</div>
+        <span>税金 :              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= tax.toLocaleString() %>&nbsp;&nbsp;&nbsp;円</span>
+        <hr>
+        <div>合計金額 :           &nbsp;&nbsp;&nbsp;&nbsp;<%= total.toLocaleString() %>&nbsp;&nbsp;円</div>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col">
-        <span><%= address.address %></span>
-      </div>
-    </div>
+    <br>
+    
     
     <div class="row">
       <div class="col">
@@ -90,10 +72,10 @@
 
     <div class="row">
       <div class="col">
-        <input type="checkbox" id='cash' name="cash" value="cash"><label for="1">代金引換</label>
+        <input type="checkbox" id='cash' name="cash" value="cash"><label for="cash">代金引換</label>
       </div>
       <div class="col">
-        <input type="submit" value="注文を確定する">
+        <input type="submit" value="注文を確定する" class="btn btn-primary">
       </div>
     </div>
     
