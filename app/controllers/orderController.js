@@ -1,6 +1,7 @@
 "use strict";
 
 const { body } = require("express-validator");
+const { update } = require("../models/user");
 
 const Order = require("../models/order"),
 	OrderItem = require("../models/orderItem"),
@@ -178,20 +179,17 @@ module.exports = {
 				throw err;
       });
       
-      ///とりあえず目的地アドレスに登録しとく///
-      const destinationAddress = await Address.findOne({}, function
-        (err, result) {
-          return result;
-        })
-      console.log(destinationAddress);
-      console.log('wwwwwwwwwwwwwwwww');
+      
 		if (!order) { // カートなしの場合は新規作成
 			const newOrder = new Order({
 				user: loginUser._id,
 				paymentMethod: 0,
         status: 0,
         subTotal: 0,
-        destinationAddress: destinationAddress._id,
+        //destinationAddress: '',
+        //tax: 0,
+        //total: 0,
+        //orderDate: Date.now(),
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
@@ -258,11 +256,14 @@ module.exports = {
             var tax;
             total = Math.floor(orderResult[0].subTotal * 1.1);
             tax = Math.floor(orderResult[0].subTotal * 0.1);
-            //destinationAddressを取得
-            Order.find({})
-              .populate("destinationAddress")
-              .exec(function(err, destinationAddressResult) {
-                //console.log(destinationAddressResult);
+            //Addressのリストを取得
+            Address.find({ _id: orderResult[0].user.addresses })
+              .populate("addresses")
+              .exec(function(err, addressResult) {
+                if (err) throw err;
+                //console.log(addressResult[0].defaultAddress);
+                
+                
 
                 res.render("./orderConfirm.ejs", {
                   orderItemResult: orderItemResult,
@@ -270,7 +271,9 @@ module.exports = {
                   subTotal: orderResult[0].subTotal,
                   tax: tax,
                   total: total,
-                  address: destinationAddressResult[0].destinationAddress,
+                  address: addressResult,
+                  defaultAddress: orderResult[0].user.defaultAddress,
+                  //addressList: orderResult[0].user.addresses,
 
               })
             
@@ -279,23 +282,26 @@ module.exports = {
         
       })
 
-
-    
   },
 
   //注文確定する
-  determine: (req, res) => {
-
-    //orderのステータスを更新
+  determine: async (req, res) => {
+    
+    //orderを更新
     Order.update(
-      { $set: { status: 1 } },
+      { $set: { subTotal: req.body.subTotal,
+                tax: req.body.tax,
+                total: req.body.total,
+                orderDate: new Date(),
+                destinationAddress: req.body.address,
+                paymentMethod: req.body.pay,
+                status: 1,
+                 } },
       function(err) {
         if (err) throw err;
       }
     )
-      
-    res.render("./orderFinished.ejs", {
-      
+    res.render("./orderFinished.ejs", {    
     })
   },
 

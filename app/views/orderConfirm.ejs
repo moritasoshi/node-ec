@@ -3,28 +3,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/css/nodec.css">
+
+    
 </head>
 
 <body>
+
+  
+
 <main role="main" class="container">
 
-    <!-- <div class="border-bottom mt-5 mb-5">
-        <h1>注文確認</h1>
-    </div> -->
-
-   
 
     <div class="row">
       <div class="col"><strong>注文確認</strong></div>
-    </div>
-
+    </div><br>
+    
     <form method="POST" action="/order/determine">
     <div class="row">
       <% orderItemResult.forEach(function (item, index) { %> 
       <div class="col">
-        <img style="max-height: 6rem;" width="auto" 
-             src="./image/<%= item.item.photoURL %>">
-        <span><%= item.item.name %></span>
+        <img style="max-height: 3rem;" width="auto" 
+             src="/image/<%= item.item.photoURL %>"><br>
+        <span><%= item.item.name %></span><br>
         <span><%= item.item.price %>円</span>
         <span>×<%= item.quantity %></span>
       </div>
@@ -37,42 +38,41 @@
       <div class="col"><br><br></div>
     </div>
     
-
+    <strong>送付先住所</strong><br><br>
     <div class="row">
-      <div class="col"><strong><!-- 送付先の住所 --></strong></div>
       <div class="col">
-        <div>小計<%= subTotal %>円</div>
-        <span>税金</span><%= tax %>円
+        
+        <% address.forEach(function (item, index) {%> 
+        <% const isDefault = defaultAddress == item.id ? "checked" : "" %>
+        <label>
+        <input class="radio-plain" type="radio" name="address" id="" value="<%= item.id %>" <%= isDefault %> required>
+        <span>&nbsp;&nbsp;&nbsp;〒<%= item.zipCode %></span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><%= item.address %></span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><%= item.lastName + item.firstName %></span><br>
+        </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <% }) %>
+        
+      </div>
+      
+      <div class="col">
+        <div>小計 :               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= subTotal.toLocaleString() %>&nbsp;&nbsp;円</div>
+        <span>税金 :              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= tax.toLocaleString() %>&nbsp;&nbsp;&nbsp;円</span>
         <hr>
-        <div>合計金額<%= total %>円</div>
+        <div>合計金額 :           &nbsp;&nbsp;&nbsp;&nbsp;<%= total.toLocaleString() %>&nbsp;&nbsp;円</div>
+        <input type="hidden" name="subTotal" value="<%= subTotal %>">
+        <input type="hidden" name="tax" value="<%= tax %>">
+        <input type="hidden" name="total" value="<%= total %>">
       </div>
     </div>
-
     <br>
-    <strong>送付先住所</strong>
-    <div class="row">
-      <div class="col">
-        <span><%= address.firstName + address.lastName %></span>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <span><%= address.zipcode %></span>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <span><%= address.address %></span>
-      </div>
-    </div>
     
-    <div class="row">
+    
+    <!-- <div class="row">
       <div class="col">
         <a href="/">他の連絡先を選択</a>
       </div>
-    </div>
+    </div> -->
     
     <div class="row">
       <div class="col"><br><br></div>
@@ -81,19 +81,22 @@
     <div class="row">
       <div class="col"><strong>支払い方法の選択</strong></div>
     </div>
+    <br>
 
     <div class="row">
       <div class="col">
-        <input type="checkbox" id='credit' name="credit" value="credit"><label for="credit">クレジットカード</label>
+        <input type="radio" id='credit' name="pay" value="0" required>
+        <label for="credit">クレジットカード</label>
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <input type="checkbox" id='cash' name="cash" value="cash"><label for="1">代金引換</label>
+        <input type="radio" id='cash' name="pay" value="1" required>
+        <label for="cash">代金引換</label>
       </div>
       <div class="col">
-        <input type="submit" value="注文を確定する">
+        <input type="submit" value="注文を確定する" class="btn btn-primary">
       </div>
     </div>
     
