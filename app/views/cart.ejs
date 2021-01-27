@@ -165,8 +165,9 @@
 
 
     
-  
-    <% if (total != 0) { %>
+    
+    <% if ( user ) { %>
+    <% if ( total != 0 ) { %>
     <div class="row float-right">
       <div class="col">
         <span>合計金額</span>
@@ -182,6 +183,7 @@
       </div>
     </div>
     
+    <% } %>
     <% } %>
 
 

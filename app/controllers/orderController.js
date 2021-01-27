@@ -28,7 +28,7 @@ module.exports = {
           return result;
         });
         //console.log(newOrder);
-        if (newOrder != []) {
+        if (newOrder) {
           //orderItemの数だけorderItemとitemをjoinして取得  
         await OrderItem.find({ _id: newOrder[0].orderItems })
         .populate("item")
@@ -52,6 +52,9 @@ module.exports = {
             console.error(err);
             throw err;
           }) */
+          //console.log(req.user);
+          //var user = req.user;
+          //console.log(user);
           Order.findByIdAndUpdate(newOrder[0]._id, {
               $set: {subTotal: total} },
             function() {
@@ -64,11 +67,11 @@ module.exports = {
           });   
         });
 
-        } else if (newOrder == []) {
+        } else if (!newOrder) {
           res.render('./cart.ejs',{
             //orderItemResult : orderItemResult,
-            total : total,
-            user: req.user,
+            total : [],
+            //user: req.user,
           });   
         }
         
