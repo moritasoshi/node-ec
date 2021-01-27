@@ -24,39 +24,36 @@ module.exports = {
 	 index: async(req, res) => {
 
         //orderを取得
-        const newOrder = await Order.find({ status: 0 }, function(err, result) {
+        const newOrder = await Order.findOne({ status: 0 }, function(err, result) {
           if (err) throw err;
           return result;
         });
-        //console.log(newOrder);
+
+        //orderなし
+        if (!newOrder) {
+          res.render('./cart.ejs',{
+            //orderItemResult : orderItemResult,
+            total : [],
+            //user: req.user,
+          });   
+        }
+        //orderあり
         if (newOrder) {
-          //orderItemの数だけorderItemとitemをjoinして取得  
-        await OrderItem.find({ _id: newOrder[0].orderItems })
+          console.log('sssssss');
+        //orderItemの数だけorderItemとitemをjoinして取得  
+        await OrderItem.find({ _id: newOrder["orderItems"] })
         .populate("item")
         .exec(function(err, orderItemResult) {
           if (err) throw err;           
-          //return orderItemResult;
-          //金額算出
+          //小計金額算出
           var total = 0;
-          //console.log(orderItemResult);
           orderItemResult.forEach(orderItem => {
-            //console.log('kkkkkkkk');
-            //console.log(orderItem);
             var nowTotal;
             nowTotal = orderItem.quantity * orderItem.item.price;
             total = total + nowTotal;
           });
           //orderのsubtotalを更新
-          /* Order.findByIdAndUpdate(newOrder[0]._id,{
-            $set: { subTotal: total } 
-          }).catch(err => {
-            console.error(err);
-            throw err;
-          }) */
-          //console.log(req.user);
-          //var user = req.user;
-          //console.log(user);
-          Order.findByIdAndUpdate(newOrder[0]._id, {
+          Order.findByIdAndUpdate(newOrder._id, {
               $set: {subTotal: total} },
             function() {
               if (err) throw err; 
@@ -65,17 +62,9 @@ module.exports = {
             orderItemResult : orderItemResult,
             total : total,
             user: req.user,
-          });   
+            });   
         });
-
-        } else if (!newOrder) {
-          res.render('./cart.ejs',{
-            //orderItemResult : orderItemResult,
-            total : [],
-            //user: req.user,
-          });   
-        }
-        
+        }   
       
 　},
 
