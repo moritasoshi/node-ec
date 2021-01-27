@@ -1,7 +1,7 @@
 "use strict";
 
-const { body } = require("express-validator");
-const { update } = require("../models/user");
+const {body} = require("express-validator");
+const {update} = require("../models/user");
 
 const Order = require("../models/order"),
 	OrderItem = require("../models/orderItem"),
@@ -18,6 +18,7 @@ const Order = require("../models/order"),
 // { body } = require("express-validator");
 
 module.exports = {
+
 
    //カート中身画面表示
 	 index: async(req, res) => {
@@ -150,13 +151,17 @@ module.exports = {
   },
   
 
+
 	//カートに商品追加
 	add: async (req, res) => {
 		const loginUser = req.user;
 		const newOrderItem = getOrderItemParams(req.body);
 
+
 		// カートがすでに存在するか判定
+
 		let order = await Order.findOne({ status: 0 },{user: loginUser._id})
+
 			.populate("orderItems")
 			.exec()
 			.then(data => {
@@ -165,20 +170,22 @@ module.exports = {
 			.catch(err => {
 				console.error(err);
 				throw err;
+
       });
       
     //console.log('llllll');
     //console.log(req.user);
+
 		if (!order) { // カートなしの場合は新規作成
 			const newOrder = new Order({
 				user: loginUser._id,
 				paymentMethod: 0,
-        status: 0,
-        subTotal: 0,
-        //destinationAddress: '',
-        //tax: 0,
-        //total: 0,
-        //orderDate: Date.now(),
+				status: 0,
+				subTotal: 0,
+				//destinationAddress: '',
+				//tax: 0,
+				//total: 0,
+				//orderDate: Date.now(),
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
@@ -225,6 +232,7 @@ module.exports = {
 			throw err;
 		})
 		res.redirect("/order");
+
   },
   
   //注文確認画面表示
@@ -310,4 +318,5 @@ module.exports = {
     })
   })
   },
+
 }
