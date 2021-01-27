@@ -96,13 +96,13 @@
     <!-- <div class="border-bottom mt-5 mb-5">    
     </div> -->
 
-    <% if (orderItemResult == []) { %>
+    <% if (total == 0) { %>
       <h1>カートに商品がありません</h1>
     <% } %>
 
 
     
-    <% if (orderItemResult != []) { %>
+    <% if (total != 0) { %>
       
     <h1>あなたのカート</h1>
     <a href="/">買い物に戻る</a>
@@ -166,7 +166,7 @@
 
     
   
-    <% if (orderItemResult != []) { %>
+    <% if (total != 0) { %>
     <div class="row float-right">
       <div class="col">
         <span>合計金額</span>
@@ -181,14 +181,9 @@
       </div>
       </div>
     </div>
-   
-
-    
     
     <% } %>
 
-
-    
 
 
 </main>
