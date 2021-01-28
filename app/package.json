@@ -10,7 +10,6 @@
   "author": "morita soshi",
   "license": "MIT",
   "dependencies": {
-    "@shelf/jest-mongodb": "^1.2.3",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
@@ -25,6 +24,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^1.2.3",
     "jest": "^26.6.3",
     "mongodb": "^3.6.3"
   }
