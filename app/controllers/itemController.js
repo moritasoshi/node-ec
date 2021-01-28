@@ -4,12 +4,12 @@ const Item = require("../models/item"),
 	itemsPerPage = 8;
 
 module.exports = {
-	show: (req, res) => {
+	show: async (req, res) => {
 		const itemId = req.params._id;
-		Item.findById(itemId, function (err, result) {
+		const result = await Item.findById(itemId, function (err, result) {
 			if (err) throw err;
-			res.render('./detail.ejs', result);
 		});
+		res.render('./detail.ejs', result);
 	},
 	itemList: async (req, res) => {
 		const query = req.query;
@@ -44,7 +44,7 @@ module.exports = {
 
 		// ページの処理
 		const total = await Item.find(filter).count();
-		const totalPage = Math.ceil( total/itemsPerPage );
+		const totalPage = Math.ceil(total / itemsPerPage);
 		let page = query.page;
 		if (!page || page <= 0) {
 			page = 1;
