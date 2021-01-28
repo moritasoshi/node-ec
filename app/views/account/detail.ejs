@@ -22,38 +22,78 @@
         <div class="col-sm-7">
             <h4>注文履歴</h4>
             <% if(orders.length !== 0) { %>
-                <div class="card mb-3">
-                    <div class="card-header text-muted">
-                        <div class="row">
-                            <div class="col-4">注文日</div>
-                            <div class="col-4">合計</div>
-                            <div class="col-4">送付先</div>
+                <% orders.forEach(order => { %>
+                    <div class="card mb-3">
+                        <div class="card-header text-muted">
+                            <div class="row">
+                                <div class="col-5"><small>注文日:</small>
+                                    <div><%= order.orderDate.toLocaleString('ja-JP') %></div>
+                                </div>
+                                <div class="col-3"><small>合計:</small>
+                                    <div>¥<%= order.total.toLocaleString() %></div>
+                                </div>
+                                <div class="col-4"><small>送付先:</small>
+                                    <% const destinationAddress = order.destinationAddress %>
+                                    <div><%= destinationAddress.firstName %> <%= destinationAddress.lastName %></div>
+                                </div>
+                            </div>
                         </div>
+                        <% order.orderItems.forEach(orderItem => { %>
+                            <div class="row">
+                                <div class="col-4 text-center">
+                                    <div class="card-body">
+                                        <a href="/item/<%= orderItem.item._id %>">
+                                            <img alt="item image" class="embed-responsive-item"
+                                                 height="90"
+                                                 src="./image/<%= orderItem.item.photoURL %>"/>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body">
+                                        <p class="abridgement">
+                                            <a href="/item/<%= orderItem.item._id %>"><%= orderItem.item.name %></a>
+                                        </p>
+                                        <p class="card-text"><small
+                                                    class="text-muted">¥<%= orderItem.item.price.toLocaleString() %> ×
+                                                ️<%= orderItem.quantity %></small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
                     </div>
-                    <% orders.orderItems.forEach(orderItem => { %>
-                        <div class="row">
-                            <div class="col-4 text-center">
-                                <div class="card-body">
-                                    <a href="/item/<%= orderItem.item._id %>">
-                                        <img alt="item image" class="embed-responsive-item"
-                                             height="90"
-                                             src="./image/<%= orderItem.item.photoURL %>"/>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-8">
-                                <div class="card-body">
-                                    <p class="abridgement">
-                                        <a href="/item/<%= orderItem.item._id %>"><%= orderItem.item.name %></a>
-                                    </p>
-                                    <p class="card-text"><small class="text-muted">¥<%= orderItem.item.price.toLocaleString() %> ×
-                                        ️<%= orderItem.quantity %></small></p>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
+                <% }) %>
             <% } %>
+            <div class="mx-auto" style="width: 200px;">
+                <% const isActive = function (page){ %>
+                    <% if (page == currentPage) return "active" %>
+                    <% return "" %>
+                <% } %>
+                <% const previous = `?page=${currentPage - 1}` %>
+                <% const next = `?page=${currentPage + 1}` %>
+
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="/account<%= previous %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        <% for(let step = 1; step <= totalPage; step++){ %>
+                            <% const to = `?page=${step}` %>
+                            <li class="page-item <%= isActive(step) %>"><a class="page-link" href="/account<%= to %>"><%= step %></a>
+                            </li>
+                        <% } %>
+                        <li class="page-item">
+                            <a class="page-link" href="/account<%= next %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
         <div class="col-sm-1">
         </div>

@@ -25,6 +25,11 @@ const Address = new Schema(
 			type: String,
 			required: true
 		},
+		isDeleted: {
+			type: Boolean,
+			default: false,
+			required: true
+		},
 	},
 	{
 		timestamps: true

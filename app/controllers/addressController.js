@@ -66,7 +66,7 @@ module.exports = {
 		}
 
 		const latestUser = await User.findById(loginUser._id, function (err, data) {
-			if(err) throw err;
+			if (err) throw err;
 			return data;
 		})
 
@@ -151,7 +151,7 @@ module.exports = {
 		}
 
 		const latestUser = await User.findById(loginUser._id, function (err, data) {
-			if(err) throw err;
+			if (err) throw err;
 			return data;
 		})
 
@@ -194,7 +194,7 @@ module.exports = {
 
 				// Addressの削除
 				User.updateMany({}, {$pull: {addresses: addressId}}, {multi: true})
-					.then(() => Address.findByIdAndRemove(addressId))
+					.then(() => Address.findByIdAndUpdate(addressId, {$set: {isDeleted: true}}))
 					.catch(err => res.send({'error': 'An error has occurred - ' + err}))
 					.finally(() => res.redirect('/account/address'));
 			})

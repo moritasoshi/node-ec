@@ -6,6 +6,7 @@ const User = require("../models/user"),
 	passport = require("passport"),
 	{validationResult} = require('express-validator'),
 	bcrypt = require('bcrypt'),
+	itemsPerPage = 3,
 	getUserParams = body => {
 		return {
 			firstName: body.firstName,
@@ -39,9 +40,28 @@ module.exports = {
 				console.error(err);
 				throw err;
 			})
+
+		// ページの処理
+		const query = req.query;
+		const total = await Order.find({user: loginUser._id, status: {$in: [1, 2, 9]}}).count();
+		const totalPage = Math.ceil(total / itemsPerPage);
+		let page = query.page;
+		if (!page || page <= 0) {
+			page = 1;
+		} else if (page > totalPage) {
+			page = totalPage;
+		}
+		page = parseInt(page)
+		const skipCount = (page-1) * itemsPerPage;
+
+
 		// 注文履歴を取得
-		let orders = await Order.findOne({user: loginUser._id})
+		let orders = await Order.find({user: loginUser._id, status: {$in: [1, 2, 9]}})
+			.sort({orderDate: -1})
+			.skip(skipCount)
+			.limit(itemsPerPage)
 			.populate("orderItems")
+			.populate("destinationAddress")
 			.then(data => {
 				return data;
 			})
@@ -51,12 +71,16 @@ module.exports = {
 			});
 		// itemをjoinした結果を取得
 		if (orders) {
-			orders.orderItems = await populateItem(orders.orderItems);
+			for (const order of orders) {
+				order.orderItems = await populateItem(order.orderItems);
+			}
 		}
 
 		const locals = {
 			userInfo: userInfo,
 			orders: orders,
+			totalPage: totalPage,
+			currentPage: page,
 		}
 		console.log(JSON.stringify(orders, null, "\t"));
 		res.render('./account/detail.ejs', locals);
