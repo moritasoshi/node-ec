@@ -40,8 +40,10 @@ module.exports = {
 				throw err;
 			})
 		// 注文履歴を取得
-		let orders = await Order.findOne({user: loginUser._id})
+		let orders = await Order.find({user: loginUser._id, status: {$in: [1, 2, 9]}})
+			.sort({orderDate: -1})
 			.populate("orderItems")
+			.populate("destinationAddress")
 			.then(data => {
 				return data;
 			})
@@ -51,7 +53,9 @@ module.exports = {
 			});
 		// itemをjoinした結果を取得
 		if (orders) {
-			orders.orderItems = await populateItem(orders.orderItems);
+			for (const order of orders) {
+				order.orderItems = await populateItem(order.orderItems);
+			}
 		}
 
 		const locals = {
