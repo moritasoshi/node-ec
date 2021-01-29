@@ -52,7 +52,7 @@ module.exports = {
 			page = totalPage;
 		}
 		page = parseInt(page)
-		const skipCount = (page-1) * itemsPerPage;
+		const skipCount = (page - 1) * itemsPerPage;
 
 
 		// 注文履歴を取得
@@ -88,7 +88,7 @@ module.exports = {
 	toRegister: (req, res) => {
 		res.render('./account/register.ejs');
 	},
-	register: (req, res, next) => {
+	register: async (req, res, next) => {
 		const newUser = new User(getUserParams(req.body));
 		newUser.password = bcrypt.hashSync(newUser.password, 10);
 		const locals = {
@@ -99,27 +99,18 @@ module.exports = {
 			return res.render('./account/register.ejs', locals);
 		}
 
-		const saveUser = new Promise((resolve, reject) => {
-			newUser.save((err) => {
-				if (err) reject(err);
-				else resolve();
-			})
-		});
-
-		saveUser
-			.then(() => next())
-			.catch(err => {
-				if (err.message.match("duplicate key") && err.message.match("email")) { // メールアドレス重複
-					console.log(locals.errors)
-					locals.errors.push({
-						value: '',
-						msg: '登録済みのメールアドレスです',
-						param: 'email',
-						location: 'db'
-					})
-					return res.render('./account/register.ejs', locals);
-				}
-			})
+		await newUser.save().catch(err => {
+			if (err.message.match("duplicate key") && err.message.match("email")) { // メールアドレス重複
+				locals.errors.push({
+					value: '',
+					msg: '登録済みのメールアドレスです',
+					param: 'email',
+					location: 'db'
+				})
+				return res.render('./account/register.ejs', locals);
+			}
+		})
+		next();
 	},
 	toLogin: (req, res) => {
 		const flash = req.flash('error')
