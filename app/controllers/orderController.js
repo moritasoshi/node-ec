@@ -31,7 +31,7 @@ module.exports = {
 
         //orderなし
         if (!newOrder) {
-          res.render('./cart.ejs',{
+          res.render('./order/cart.ejs',{
             //orderItemResult : orderItemResult,
             total : [],
             //user: req.user,
@@ -58,7 +58,7 @@ module.exports = {
             function() {
               if (err) throw err; 
             })
-            res.render('./cart.ejs',{
+            res.render('./order/cart.ejs',{
             orderItemResult : orderItemResult,
             total : total,
             user: req.user,
@@ -270,7 +270,7 @@ module.exports = {
                 
                 
 
-                res.render("./orderConfirm.ejs", {
+                res.render("./order/orderConfirm.ejs", {
                   orderItemResult: orderItemResult,
                   user: orderResult.user,
                   subTotal: confirmOrder.subTotal,
@@ -322,7 +322,7 @@ module.exports = {
 
       })
     
-      res.render("./orderFinished.ejs", {    
+      res.render("./order/orderFinished.ejs", {
     })
   
   },
