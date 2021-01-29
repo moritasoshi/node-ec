@@ -9,7 +9,7 @@ module.exports = {
 		const result = await Item.findById(itemId, function (err, result) {
 			if (err) throw err;
 		});
-		res.render('./detail.ejs', result);
+		res.render('./item/detail.ejs', result);
 	},
 	itemList: async (req, res) => {
 		const query = req.query;
