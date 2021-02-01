@@ -12,20 +12,24 @@ const express = require('express'),
 	bcrypt = require('bcrypt'),
 	User = require("./models/user"),
 	PORT = 3000,
+	MONGODB_HOSTS = process.env.MONGODB_HOSTS || "localhost",
+	MONGODB_DATABASE = process.env.MONGODB_DATABASE || "nodec",
+	MONGODB_REPLICASET = process.env.MONGODB_REPLICASET ? `?replicaSet=${process.env.MONGODB_REPLICASET}` : "",
 	app = express();
 
 
 // DB
 mongoose
 	// .connect('mongodb://localhost:30001,localhost:30002,localhost:30003/nodec?replicaSet=rs0', {
-  .set('useCreateIndex', true)
-	.connect('mongodb://localhost/nodec', {
+	.set('useCreateIndex', true)
+	.connect(`mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}${MONGODB_REPLICASET}`, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 		useFindAndModify: false
 	})
 	.then(() => console.log('Database Connected...'))
 	.catch(err => console.log(err));
+console.log(`mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}${MONGODB_REPLICASET}`)
 
 // テンプレートエンジン
 app.set('view engine', 'ejs');
@@ -33,7 +37,6 @@ app.use(layouts);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static('public'));
-
 
 // 認証&セッション管理
 passport.use(new LocalStrategy({
