@@ -45,7 +45,7 @@ module.exports = {
 		const query = req.query;
 		const total = await Order.find({user: loginUser._id, status: {$in: [1, 2, 9]}}).count();
 		const totalPage = Math.ceil(total / itemsPerPage);
-		let page = query.page;
+		let page = query ? query.page : null;
 		if (!page || page <= 0) {
 			page = 1;
 		} else if (page > totalPage) {
