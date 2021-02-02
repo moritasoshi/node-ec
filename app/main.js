@@ -20,7 +20,6 @@ const express = require('express'),
 
 // DB
 mongoose
-	// .connect('mongodb://localhost:30001,localhost:30002,localhost:30003/nodec?replicaSet=rs0', {
 	.set('useCreateIndex', true)
 	.connect(`mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}${MONGODB_REPLICASET}`, {
 		useNewUrlParser: true,
