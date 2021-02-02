@@ -50,7 +50,7 @@ describe('insert', () => {
 		await itemController.show(req, res)
 
 		// 確認
-		expect(res.render).toHaveBeenCalledWith('./detail.ejs', insertedItem);
+		expect(res.render).toHaveBeenCalledWith('./item/detail.ejs', insertedItem);
 	});
 
 	// DB切断

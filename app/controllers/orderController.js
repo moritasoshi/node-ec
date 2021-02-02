@@ -39,12 +39,13 @@ module.exports = {
         }
         //orderあり
         if (newOrder) {
-          console.log('sssssss');
+          //console.log('sssssss');
         //orderItemの数だけorderItemとitemをjoinして取得  
         await OrderItem.find({ _id: newOrder["orderItems"] })
         .populate("item")
         .exec(function(err, orderItemResult) {
-          if (err) throw err;           
+          if (err) throw err;
+          //console.log(orderItemResult);           
           //小計金額算出
           var total = 0;
           orderItemResult.forEach(orderItem => {
@@ -53,7 +54,7 @@ module.exports = {
             total = total + nowTotal;
           });
           //orderのsubtotalを更新
-          Order.findByIdAndUpdate(newOrder._id, {
+           Order.findByIdAndUpdate(newOrder._id, {
               $set: {subTotal: total} },
             function() {
               if (err) throw err; 
