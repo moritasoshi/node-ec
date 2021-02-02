@@ -8,8 +8,8 @@ metadata:
     type: frontend
 spec:
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
   selector:
     app: nodec
     type: frontend
@@ -28,15 +28,11 @@ data:
     user  nginx;
     worker_processes  auto;
 
-    error_log  /var/log/nginx/error.log warn;
+    error_log  /var/log/nginx/error.log;
     pid        /var/run/nginx.pid;
-
-
     events {
         worker_connections  1024;
     }
-
-
     http {
         include       /etc/nginx/mime.types;
         default_type  application/octet-stream;
@@ -68,15 +64,6 @@ data:
             location / {
                 proxy_pass http://${APPLICATION_HOST}/;
             }
-
-            location /public/ {
-                proxy_pass http://${APPLICATION_HOST}/public/;
-                proxy_ignore_headers Cache-Control Expires;
-                proxy_buffering on;
-                proxy_cache STATIC;
-                proxy_cache_valid any 10d;
-                add_header X-Nginx-Cache $upstream_cache_status;
-            }
         }
 
         # include /etc/nginx/conf.d/*.conf;
@@ -93,38 +80,36 @@ metadata:
     app: nodec
     type: frontend
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app: nodec
       type: frontend
+  replicas: 3
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-    type: RollingUpdate
   revisionHistoryLimit: 14
   template:
     metadata:
-      name: nginx
-      namespace: default
       labels:
         app: nodec
         type: frontend
     spec:
       containers:
-      - name: nginx
-        image: nodec-web:v1.0.0
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 80
-        env:
-        - name: "APPLICATION_HOST"
-          value: "app-svc:3000"
-        volumeMounts:
-        - name: config-volume
-          mountPath: /home/nginx
+        - name: nginx
+          image: asia.gcr.io/gihyo-kube-303506/nodec-web:v1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: "APPLICATION_HOST"
+              value: "app-svc:3000"
+          volumeMounts:
+            - mountPath: /home/nginx
+              name: nginx-config-volume
       volumes:
-      - name: config-volume
-        configMap:
-          name: nginx-config
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
