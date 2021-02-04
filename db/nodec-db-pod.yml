@@ -4,6 +4,7 @@ metadata:
   name: db-svc
   labels:
     app: nodec
+    type: database
 spec:
   ports:
     - port: 27017
@@ -11,6 +12,7 @@ spec:
   clusterIP: None
   selector:
     app: nodec
+    type: database
 
 ---
 apiVersion: storage.k8s.io/v1beta1
@@ -32,16 +34,19 @@ metadata:
   name: mongo
   labels:
     app: nodec
+    type: database
 spec:
   selector:
     matchLabels:
       app: nodec
+      type: database
   serviceName: db-svc
   replicas: 3
   template:
     metadata:
       labels:
         app: nodec
+        type: database
     spec:
       containers:
         - name: mongo
@@ -65,4 +70,4 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 4Gi
+            storage: 1Gi
