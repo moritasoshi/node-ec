@@ -41,7 +41,11 @@
     <strong>送付先住所</strong><br><br>
     <div class="row">
       <div class="col">
-        
+        <% if (address == 0){ %>
+          <div><strong><u> 購入には送付先住所の登録が必要です </u></strong></div><br>
+          <a href="/account/address/register" class="btn btn-primary">住所を登録する</a>
+          <!-- <input type="submit" value="注文を確定する" class="btn btn-primary"> -->
+        <% } else { %>  
         <% address.forEach(function (item, index) {%> 
         <% const isDefault = defaultAddress == item.id ? "checked" : "" %>
         <label>
@@ -52,6 +56,8 @@
         </label>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <% }) %>
+        <% } %>
+
         
       </div>
       
@@ -95,9 +101,12 @@
         <input type="radio" id='cash' name="pay" value="1" required>
         <label for="cash">代金引換</label>
       </div>
+      <% if (address == 0) { %>
+      <% } else { %>
       <div class="col">
         <input type="submit" value="注文を確定する" class="btn btn-primary">
       </div>
+      <% } %>
     </div>
     
     </form>
