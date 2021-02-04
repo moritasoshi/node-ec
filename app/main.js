@@ -2,6 +2,7 @@
 
 const express = require('express'),
 	layouts = require("express-ejs-layouts"),
+	favicon = require('serve-favicon'),
 	router = require("./routes/index"),
 	bodyParser = require('body-parser'),
 	mongoose = require("mongoose"),
@@ -36,6 +37,8 @@ app.use(layouts);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static('public'));
+
+app.use(favicon('./public/favicon.ico'));
 
 // 認証&セッション管理
 passport.use(new LocalStrategy({
