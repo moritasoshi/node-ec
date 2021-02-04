@@ -19,33 +19,28 @@ const Order = require("../models/order"),
 
 module.exports = {
 
-
    //カート中身画面表示
 	 index: async(req, res) => {
 
-        //orderを取得
-        const newOrder = await Order.findOne({ status: 0 }, function(err, result) {
-          if (err) throw err;
-          return result;
-        });
-
-        //orderなし
-        if (!newOrder) {
+      //orderを取得
+      await Order.findOne({ status: 0 }).and({ user: req.user._id })
+              .exec(function(err, resultOrder) {
+              if (err) throw err;
+    
+      //orderなし
+      if (!resultOrder) {
           res.render('./order/cart.ejs',{
-            //orderItemResult : orderItemResult,
             total : [],
-            //user: req.user,
           });   
-        }
-        //orderあり
-        if (newOrder) {
-          //console.log('sssssss');
+      }
+
+      //orderあり
+      if (resultOrder) {
         //orderItemの数だけorderItemとitemをjoinして取得  
-        await OrderItem.find({ _id: newOrder["orderItems"] })
-        .populate("item")
-        .exec(function(err, orderItemResult) {
-          if (err) throw err;
-          //console.log(orderItemResult);           
+        OrderItem.find({ _id: resultOrder.orderItems })
+          .populate("item")
+          .exec(function(err, orderItemResult) {
+          if (err) throw err;       
           //小計金額算出
           var total = 0;
           orderItemResult.forEach(orderItem => {
@@ -53,20 +48,21 @@ module.exports = {
             nowTotal = orderItem.quantity * orderItem.item.price;
             total = total + nowTotal;
           });
-          //orderのsubtotalを更新
-           Order.findByIdAndUpdate(newOrder._id, {
-              $set: {subTotal: total} },
-            function() {
-              if (err) throw err; 
-            })
+  
+            //orderのsubtotalを更新
+            Order.findByIdAndUpdate(resultOrder._id, { subTotal: total },
+              function() {
+                if (err) throw err; 
+              })
             res.render('./order/cart.ejs',{
             orderItemResult : orderItemResult,
             total : total,
             user: req.user,
-            });   
-        });
+            })   
+          })
         }   
-      
+      })
+
 　},
 
   //カート数量変更
@@ -88,37 +84,24 @@ module.exports = {
         function(err) {
           if (err) throw err;
         })
+
       //更新前のorderを取得
       const preOrder = await Order.find({},
         function (err, result) {
           if (err) throw err;
           return result;
         })
-      //orderのorderItems[]１つ削除(新たなorderに更新)
-      //var afterDeleteOrderItems;
-      
-      ////////////////////////////////////////////////////
-      /* preOrder[0].orderItems.forEach((orderItemId, index) => {
-        if (orderItemId.toString() === preOrderItem._id.toString()) {
-          preOrder[0].orderItems.splice(index, 1);
-        }
-      }); */
-      //console.log(preOrder[0].orderItems);
-      //console.log(preOrderItem._id);
+
       const afterDeleteOrderItems = preOrder[0].orderItems
         .filter(v => v.toString() != preOrderItem._id.toString())
-      //afterDeleteOrderItems = preOrder[0].orderItems;
-
-      //console.log(afterDeleteOrderItems);
-      //console.log(afterDeleteOrderItems[0]);
+      
       Order.update(
         { _id: preOrder[0]._id },
         { $set: { orderItems: afterDeleteOrderItems } },
         function (err) {
           if (err) throw err;
         }
-        )
-        
+      )
         res.redirect('/order');
     }
 
@@ -126,7 +109,6 @@ module.exports = {
     //数量変更
     if (req.body.itemQuantity != null) {
 
-      
       //orderItemを更新
       await OrderItem.update(
         { _id: preOrderItem._id },
@@ -135,23 +117,20 @@ module.exports = {
           if (err) throw err;
         }
       )
-
       res.redirect('/order'); 
     }
   },
-  
-
 
 	//カートに商品追加
 	add: async (req, res) => {
+
 		const loginUser = req.user;
 		const newOrderItem = getOrderItemParams(req.body);
 
 
 		// カートがすでに存在するか判定
 
-		let order = await Order.findOne({ status: 0 },{user: loginUser._id})
-
+    let order = await Order.findOne({ status: 0 }).and({user: loginUser._id})
 			.populate("orderItems")
 			.exec()
 			.then(data => {
@@ -160,11 +139,8 @@ module.exports = {
 			.catch(err => {
 				console.error(err);
 				throw err;
-
       });
       
-    //console.log('llllll');
-    //console.log(req.user);
 
 		if (!order) { // カートなしの場合は新規作成
 			const newOrder = new Order({
@@ -172,10 +148,6 @@ module.exports = {
 				paymentMethod: 0,
 				status: 0,
 				subTotal: 0,
-				//destinationAddress: '',
-				//tax: 0,
-				//total: 0,
-				//orderDate: Date.now(),
 			});
 			order = await Order.create(newOrder)
 				.then(data => {
@@ -227,105 +199,78 @@ module.exports = {
   
   //注文確認画面表示
   confirm: async (req, res) => {
-    //orderを指定して取得
-    //console.log(req.user);
-    //console.log('kkkkkkk');
-    //const loginUser = req.user;
-    //console.log(req.user._id);
 
-    //orderを取得
-    const confirmOrder = await Order.findOne({ status: 0 }, function(err, result) {
-      if (err) throw err;
-      return result;
-    });
-
-    await Order.findOne({ status: 0 },
-                     { user: req.user._id })
+     //orderを取得
+     Order.findOne({ status: 0 }).and({ user: req.user._id })
       .populate("user")
       .populate("orderItems")
-      
       .exec(function(err, orderResult) {
         if (err) throw err;
-        console.log(orderResult);
+
         //orderItem、itemを取得
         OrderItem.find({ _id: orderResult["orderItems"] })
           .populate("item")
           .exec(function(err, orderItemResult) {
             if (err) throw err;
-            //console.log(orderResult.subTotal);
             //商品合計金額算出
             var total;
             var tax;
-            total = Math.floor(confirmOrder.subTotal * 1.1);
-            tax = Math.floor(confirmOrder.subTotal * 0.1);
+            total = Math.floor(orderResult.subTotal * 1.1);
+            tax = Math.floor(orderResult.subTotal * 0.1);
+
             //Addressのリストを取得
             Address.find({ _id: orderResult.user.addresses })
               .populate("addresses")
               .exec(function(err, addressResult) {
                 if (err) throw err;
-                //console.log(addressResult[0].defaultAddress);
-
-                //console.log(orderResult[0].subTotal);
-                //console.log(total);
-                //console.log(tax);
-                
-                
 
                 res.render("./order/orderConfirm.ejs", {
                   orderItemResult: orderItemResult,
                   user: orderResult.user,
-                  subTotal: confirmOrder.subTotal,
+                  subTotal: orderResult.subTotal,
                   tax: tax,
                   total: total,
                   address: addressResult,
                   defaultAddress: orderResult.user.defaultAddress,
-                  //addressList: orderResult[0].user.addresses,
 
+                })
               })
-            
-            });
           })
-        
-      })
-    
-    
+      }) 
   },
 
   //注文確定する
   determine: async (req, res) => {
 
-    //orderを指定して取得
-    const determineOrder1 = Order.findOne({ user: req.user._id },
-               
-               function (err, result) {
-                if (err) throw err;
-                return result;
-              })
-                
-    const determineOrder2 = determineOrder1.findOne(
-                { status: 0 },
-                function (err, result) {
-                 if (err) throw err;
-                        
-    //orderを更新
-    Order.findByIdAndUpdate(result._id,
-      { $set: { subTotal: req.body.subTotal,
-                tax: req.body.tax,
-          　    total: req.body.total,
-                orderDate: new Date(),
-                destinationAddress: req.body.address,
-                paymentMethod: req.body.pay,
-                status: 1,
-              }},
-      function(err) {
+    const address = await Address.find({ user: req.user._id })
+      .exec(function(err, result) {
         if (err) throw err;
+        
+    if (!result) {
+      //
+    } else {
+      //orderを指定して取得
+      const newOrder =  Order.findOne({ status: 0 }).and({ user: req.user._id })
+       .exec(function(err, resultOrder) {
+       if (err) throw err;
+     
+        //orderを更新
+        Order.findByIdAndUpdate(resultOrder._id,
+          { $set: { subTotal: req.body.subTotal,
+                    tax: req.body.tax,
+                    total: req.body.total,
+                    orderDate: new Date(),
+                    destinationAddress: req.body.address,
+                    paymentMethod: req.body.pay,
+                    status: 1,
+          }},
+        function(err) {
+           if (err) throw err;
+        })
+        res.render("./order/orderFinished.ejs")
       })
-
-      })
-    
-      res.render("./order/orderFinished.ejs", {
+    }
     })
-  
   },
 
 }

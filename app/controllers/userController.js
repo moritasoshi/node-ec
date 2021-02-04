@@ -82,7 +82,7 @@ module.exports = {
 			totalPage: totalPage,
 			currentPage: page,
 		}
-		console.log(JSON.stringify(orders, null, "\t"));
+		//console.log(JSON.stringify(orders, null, "\t"));
 		res.render('./account/detail.ejs', locals);
 	},
 	toRegister: (req, res) => {

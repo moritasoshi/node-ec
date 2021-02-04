@@ -26,8 +26,8 @@ describe ('controller', () => {
       updatedAt: '2021-01-26T14:23:11.405Z',
       defaultAddress: '600fe145494da3b9ec5444f7'
     },
-    body: {itemQuantity: 1,
-           orderItemId: 1}
+    body: { itemQuantity: 1,
+            orderItemId: 1 }
     
 
   };
@@ -64,7 +64,7 @@ describe ('controller', () => {
     test('view正常系', async () => {
       //orderなし
       const order = [];
-
+　　　
       await Order.insertMany(order);
       await orderController.index(req, res);
  
@@ -102,7 +102,7 @@ describe ('controller', () => {
   describe('indexのテスト2', () => {
     test('view正常系', async () => {
       //orderあり
-      const item = [
+      const item = 
         {
           name: 'Node.js超入門[第3版]',
           price: 3520,
@@ -111,15 +111,16 @@ describe ('controller', () => {
           description: 'Webアプリ開発に使える言語はたくさんありますが、ビギナーが選ぶべき言語はなんといってもJavascriptです。そして、Node.jsというソフトを使うと、Javascriptでサーバーの開発もできるんです！',
           photoURL: '2.jpg'
         }
-      ]
+      
 
       await Item.insertMany(item);
+
       const itemResult = await Item.findOne({}, function(err, result){
         if (err) throw err;
         return result;
       })
       
-      const orderItem = [
+      const orderItem = 
         {
           //_id: 6013c5dd34edae18d8313cda,
           item: {
@@ -133,44 +134,40 @@ describe ('controller', () => {
           },
           quantity: 2,
         }
-      ]
+      
 
       await OrderItem.insertMany(orderItem);
       
       const orderItemResult = await OrderItem.findOne({}, function(err, result){
           if (err) throw err;
           return result;
-          
-        })
+      })
 
-      const order = [
+      const order = 
             {
-              orderItems: [ orderItemResult._id ],
+              orderItems: orderItemResult._id ,
               user: '600fddc65f18dc813068ec44',
               paymentMethod: 0,
               status: 0,
-              subTotal: 7040,
             }
-      ]
+      
       
       await Order.insertMany(order);
-      const orderResult = await Order.findOne({}, function(err, result) {
+
+      const newOrder = await Order.findOne({ status: 0 }, function(err, result) {
         if (err) throw err;
         return result;
       })
-
-      //console.log(orderResult);
-      //console.log('kkkkkkkkkk');
-       
-      
-       const total = order.subTotal
+      console.log(newOrder);
+      console.log('kkkkkkk');
+      const total = order.subTotal;
        
        
-       //await orderController.index(req, res);
+      await orderController.index(req, res);
        //console.log(res.render);
        //console.log('kkkk');
-       //expect(res.render).toHaveBeenCalled();
-       /* expect(res.render).toHaveBeenCalledWith('./order/cart.ejs', {
+      expect(res.render).toHaveBeenCalled();
+      /* expect(res.render).toHaveBeenCalledWith('./order/cart.ejs', {
           orderItemResult: orderItemResult,
           total: total, 
           user: req.user}); */
@@ -179,7 +176,7 @@ describe ('controller', () => {
 
   describe('indexのテスト2', () => {
     test('db正常系', async () => {
-      const item = [
+      const item = 
         {
           name: 'Node.js超入門[第3版]',
           price: 3520,
@@ -188,7 +185,7 @@ describe ('controller', () => {
           description: 'Webアプリ開発に使える言語はたくさんありますが、ビギナーが選ぶべき言語はなんといってもJavascriptです。そして、Node.jsというソフトを使うと、Javascriptでサーバーの開発もできるんです！',
           photoURL: '2.jpg'
         }
-      ]
+      
 
       await Item.insertMany(item);
 
@@ -197,7 +194,7 @@ describe ('controller', () => {
         return result;
       })
 
-      const orderItem = [
+      const orderItem = 
         {
           //_id: 6013c5dd34edae18d8313cda,
           item: {
@@ -211,7 +208,7 @@ describe ('controller', () => {
           },
           quantity: 2,
         }
-      ]
+      
 
       await OrderItem.insertMany(orderItem);
 
@@ -220,7 +217,7 @@ describe ('controller', () => {
         return result;
       })
 
-      const order = [
+      const order = 
         {
           orderItems: [ orderItemResult._id ],
           user: '600fddc65f18dc813068ec44',
@@ -228,7 +225,7 @@ describe ('controller', () => {
           status: 0,
           subTotal: 7040,
         }
-      ]
+      
 
       await Order.insertMany(order);
 
@@ -249,7 +246,7 @@ describe ('controller', () => {
 
       expect(result[0]._id).toEqual(orderItemResult["_id"]);
       expect(result[0].quantity).toEqual(2);
-      expect(result[0].item.name).toEqual('Node.js超入門[第3版]');
+      expect(result[0].item.name).toEqual('天皇の国史');
       expect(result[0].item.price).toEqual(3520);
       expect(result[0].item.releaseDate).toEqual('2020/07/20');
       expect(result[0].item.category).toEqual('コンピュータ/IT');
