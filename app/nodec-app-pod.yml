@@ -7,12 +7,15 @@ metadata:
     app: nodec
     type: application
 spec:
-  ports:
-  - port: 3000
-    targetPort: 3000
+  type: NodePort
   selector:
     app: nodec
     type: application
+  ports:
+    - name: app-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
 
 ---
 apiVersion: apps/v1
@@ -45,7 +48,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: asia.gcr.io/gihyo-kube-303506/nodec-app:v1.0
+        image: asia.gcr.io/gihyo-kube-303506/nodec-app:v1.1
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
