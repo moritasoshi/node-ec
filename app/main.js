@@ -18,9 +18,8 @@ const express = require('express'),
 	MONGODB_REPLICASET = process.env.MONGODB_REPLICASET || "rs",
 	app = express();
 
-const uri = `mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}?replicaSet=${MONGODB_REPLICASET}`;
-
 // DB
+const uri = `mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}?replicaSet=${MONGODB_REPLICASET}`;
 mongoose
 	.set('useCreateIndex', true)
 	.connect(uri, {
