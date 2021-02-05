@@ -54,7 +54,6 @@ module.exports = {
 	register: async (req, res) => {
 		const newAddress = new Address(getNewAddressParams(req.body));
 		let isDefault = getIsDefault(req.body);
-		const loginUser = req.user;
 		const locals = {
 			errors: validationResult(req).errors,
 			original: req.body,
@@ -65,41 +64,40 @@ module.exports = {
 			return res.render('./address/register.ejs', locals);
 		}
 
-		const latestUser = await User.findById(loginUser._id, function (err, data) {
-			if (err) throw err;
-			return data;
-		})
+		const loginUser = await User.findById(req.user._id)
+			.catch(err => console.error(err));
 
-		if (!latestUser['defaultAddress']) isDefault = true; // 初回はデフォルトに設定
+		if (!loginUser['defaultAddress']) isDefault = true; // 初回はデフォルトに設定
 
-		newAddress.save()
-			.then((address) => {
-				User.updateOne( // addressesへの追加
-					{_id: loginUser._id},
-					{$addToSet: {addresses: address._id}},
-					function (err) {
-						if (err) throw err;
-					}
-				);
-				if (isDefault) {
-					User.updateOne( // defaultAddressの変更
-						{_id: loginUser._id},
-						{$set: {defaultAddress: address._id}},
-						function (err) {
-							if (err) throw err;
-						}
-					);
-				}
-				res.redirect('/account/address')
+		// session取得
+		const session = await Address.startSession()
+
+		try {
+			await session.startTransaction() // session開始
+
+			const insertedAddress = await newAddress.save({session})
+			await User.updateOne({_id: loginUser._id}, {$addToSet: {addresses: insertedAddress._id}}, {session})
+
+			if (isDefault) {
+				await User.updateOne({_id: loginUser._id}, {$set: {defaultAddress: insertedAddress._id}}, {session})
+			}
+
+			await session.commitTransaction() // commit
+			console.log('--------commit-----------')
+
+			res.redirect('/account/address');
+		} catch (e) {
+
+			await session.abortTransaction() // rollback
+			console.log('--------abort-----------')
+			console.error(e)
+
+			locals.errors.push({
+				msg: 'DBエラー',
+				param: 'firstName',
 			})
-			.catch(err => {
-				console.error(err);
-				locals.errors.push({
-					msg: 'DBエラー',
-					param: 'firstName',
-				})
-				return res.render('./address/register.ejs', locals);
-			})
+			res.render('./address/register.ejs', locals);
+		}
 	},
 	toEdit: (req, res) => {
 		const addressId = req.params._id;
