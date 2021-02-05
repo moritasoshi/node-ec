@@ -117,7 +117,7 @@ module.exports = {
 			})
 
 		let isDefault = "0";
-		if (user.defaultAddress || user.defaultAddress._id.toString() === addressId) {
+		if (user.defaultAddress && user.defaultAddress._id.toString() === addressId) {
 			isDefault = "1";
 		}
 
@@ -152,34 +152,37 @@ module.exports = {
 			return res.render('./address/register.ejs', locals);
 		}
 
-		const latestUser = await User.findById(loginUser._id, function (err, data) {
+		const user = await User.findById(loginUser._id, function (err, data) {
 			if (err) throw err;
 			return data;
 		})
 
-		if (latestUser['addresses'].length === 1) isDefault = true; // 住所が1つの場合はデフォルトに設定
+		if (user['addresses'].length === 1) isDefault = true; // 住所が1つの場合はデフォルトに設定
 
 		// ドキュメント更新
-		Address
-			.findByIdAndUpdate(address._id, address)
-			.then((address) => {
-				// defaultAddressの変更
-				if (getIsDefault(req.body)) {
-					User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: address._id}})
-						.then(() => res.redirect('/account/address'))
-						.catch(err => {
-							throw err
-						})
-				}
+		const session = await Address.startSession();
+
+		try {
+			await session.startTransaction();
+			const updatedAddress = await Address.findByIdAndUpdate(address._id, address, {session});
+			if (isDefault){
+				await User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: updatedAddress._id}})
+			}
+			await session.commitTransaction();
+			console.log('--------commit-----------')
+
+			res.redirect('/account/address');
+		} catch (e) {
+			await session.abortTransaction();
+			console.log('--------abort-----------')
+			console.error(e)
+
+			locals.errors.push({
+				msg: 'DBエラー',
+				param: 'firstName',
 			})
-			.catch(err => {
-				console.error(err);
-				locals.errors.push({
-					msg: 'DBエラー',
-					param: 'firstName',
-				})
-				return res.render('./address/register.ejs', locals);
-			})
+			res.render('./address/register.ejs', locals);
+		}
 
 	},
 	// 参照値を削除した後に、ドキュメントを削除
