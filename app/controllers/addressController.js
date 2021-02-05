@@ -99,32 +99,36 @@ module.exports = {
 			res.render('./address/register.ejs', locals);
 		}
 	},
-	toEdit: (req, res) => {
+	toEdit: async (req, res) => {
 		const addressId = req.params._id;
 		const loginUser = req.user;
 
-		Address.findOne({_id: addressId})
-			.then(data => {
-				var locals = {
-					original: data,
-					actionURL: "/account/address/edit",
-					btnText: "住所を更新",
-					isDefault: "0"
-				}
-				User.findOne({_id: loginUser._id}) // デフォルトの住所を確認
-					.populate("defaultAddress")
-					.exec()
-					.then(data => {
-						if (data.defaultAddress._id.toString() === addressId) {
-							locals.isDefault = "1";
-						}
-						res.render('./address/register.ejs', locals);
-					})
-			})
+		const address = await Address.findById(addressId)
 			.catch(err => {
 				console.error(err);
 				throw err;
 			})
+		const user = await User.findById(loginUser._id)
+			.populate("defaultAddress")
+			.exec()
+			.catch(err => {
+				console.error(err);
+				throw err;
+			})
+
+		let isDefault = "0";
+		if (user.defaultAddress || user.defaultAddress._id.toString() === addressId) {
+			isDefault = "1";
+		}
+
+		let locals = {
+			original: address,
+			actionURL: "/account/address/edit",
+			btnText: "住所を更新",
+			isDefault: isDefault
+		}
+
+		res.render('./address/register.ejs', locals);
 	},
 	edit: async (req, res) => {
 		const address = getUpdateAddressParams(req.body);
