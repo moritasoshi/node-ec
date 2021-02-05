@@ -13,23 +13,24 @@ const express = require('express'),
 	bcrypt = require('bcrypt'),
 	User = require("./models/user"),
 	PORT = 3000,
-	MONGODB_HOSTS = process.env.MONGODB_HOSTS || "localhost",
+	MONGODB_HOSTS = process.env.MONGODB_HOSTS || "localhost:27017,localhost:27018,localhost:27019",
 	MONGODB_DATABASE = process.env.MONGODB_DATABASE || "nodec",
-	MONGODB_REPLICASET = process.env.MONGODB_REPLICASET ? `?replicaSet=${process.env.MONGODB_REPLICASET}` : "",
+	MONGODB_REPLICASET = process.env.MONGODB_REPLICASET || "rs",
 	app = express();
 
+const uri = `mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}?replicaSet=${MONGODB_REPLICASET}`;
 
 // DB
 mongoose
 	.set('useCreateIndex', true)
-	.connect(`mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}${MONGODB_REPLICASET}`, {
+	.connect(uri, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 		useFindAndModify: false
 	})
-	.then(() => console.log('Database Connected...'))
+	.then(() => console.log(`Database Connected to ${uri}`))
 	.catch(err => console.log(err));
-console.log(`mongodb://${MONGODB_HOSTS}/${MONGODB_DATABASE}${MONGODB_REPLICASET}`)
+
 
 // テンプレートエンジン
 app.set('view engine', 'ejs');
