@@ -109,15 +109,13 @@ module.exports = {
 				throw err;
 			})
 		const user = await User.findById(loginUser._id)
-			.populate("defaultAddress")
-			.exec()
 			.catch(err => {
 				console.error(err);
 				throw err;
 			})
 
 		let isDefault = "0";
-		if (user.defaultAddress && user.defaultAddress._id.toString() === addressId) {
+		if (user.defaultAddress.toString() === addressId) {
 			isDefault = "1";
 		}
 
@@ -165,8 +163,8 @@ module.exports = {
 		try {
 			await session.startTransaction();
 			const updatedAddress = await Address.findByIdAndUpdate(address._id, address, {session});
-			if (isDefault){
-				await User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: updatedAddress._id}})
+			if (isDefault) {
+				await User.findByIdAndUpdate(loginUser._id, {$set: {defaultAddress: updatedAddress._id}}, {session})
 			}
 			await session.commitTransaction();
 			console.log('--------commit-----------')
@@ -187,21 +185,34 @@ module.exports = {
 	},
 	// 参照値を削除した後に、ドキュメントを削除
 	// ※ドキュメントを先に削除すると、参照値の削除は不可能
-	delete: (req, res) => {
+	delete: async (req, res) => {
 		const loginUser = req.user;
 		const addressId = req.params._id;
+		const user = await User.findById(loginUser._id);
 		// デフォルトの住所は削除不可
-		User.findById(loginUser._id)
-			.then(data => {
-				if (data['defaultAddress'].toString() === addressId.toString()) {
-					return res.send('デフォルトの住所は削除できません');
-				}
+		if (user['defaultAddress'].toString() === addressId.toString()) {
+			return res.send('デフォルトの住所は削除できません');
+		}
 
-				// Addressの削除
-				User.updateMany({}, {$pull: {addresses: addressId}}, {multi: true})
-					.then(() => Address.findByIdAndUpdate(addressId, {$set: {isDeleted: true}}))
-					.catch(err => res.send({'error': 'An error has occurred - ' + err}))
-					.finally(() => res.redirect('/account/address'));
-			})
+		// Addressの削除
+		const session = await User.startSession();
+		try {
+			await session.startTransaction();
+
+			await User.updateMany({}, {$pull: {addresses: addressId}}, {multi: true, session})
+			await Address.findByIdAndUpdate(addressId, {$set: {isDeleted: true}}, {session})
+
+			await session.commitTransaction();
+			console.log('--------commit-----------')
+
+		} catch (e) {
+			await session.abortTransaction();
+			console.log('--------abort-----------')
+			console.error(e)
+
+			res.send({'error': 'An error has occurred - ' + err})
+		} finally {
+			res.redirect('/account/address');
+		}
 	},
 }
