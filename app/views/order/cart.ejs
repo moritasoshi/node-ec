@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet" href="/css/nodec.css">
+
+<script>
+  
+  //document.getElementById("update").style.display ="none";
+  
+  $(function() {
+   
+   //セレクトボックスが切り替わったら発動
+   $('.userQuantity').change(function() {
+     //更新ボタンの表示非表示切り替え
+
+     //console.log($(this).next());
+     //$('#update').style.display;
+     //$(this).next().next().next().style.display = "block";
+     $(this).next().next().next().next().css("display", "block");
+     //$("#pinkBox").css("display", "none");
+     //document.getElementsByClassName("update").display ="block";
+     //console.log(document.getElementsByClassName("update"));
+
+     //選択したvalue値を変数に格納
+     var val = $(this).val();
+     $('.realUserQuantity').val(val);
+
+     var a = $(this).next().val();
+     //console.log(a);
+     
+     /* check() {
+       
+     } */
+
+     //$(this).next();
+
+     //$(this).parents('.aaaa').find('.userQuantity').next();
+
+
+     /* if ($(this).next().val() != $(this).parents('.aaaa').find('.userQuantity').next().val()) {
+       console.log('oooo');
+     } */
+     
+     $('.userQuantity').mouseover(function() {
+      //var result = confirm('数量変更した商品を更新しますか?');
+      //console.log(($(this).next().val()));
+      //console.log($(this).parents('.aaaa').find('.userQuantity').next().val());
+      //console.log(a);
+
+      if ($(this).next().val() != a) {
+        result = confirm('数量が変更されている商品があります ! 更新してください !');
+        if (result) {
+          ////フォーム送信できるといいな
+        } else {
+          location.reload();
+        }
+
+      } 
+        
+      
+
+      //confirm('数量変更した商品を更新してください');
+ /*      if (result) {
+        //フォーム送信したいけどできていない
+        //location.reload();
+        //document.myForm.updat
+        //$('myForm.updat').addEventListener('click', function() {
+        $('updat').submit();
+        //})
+      } else {
+        location.reload();
+      } */
+
+
+     });
+     
+     
+   });
+  });
+
+
+  
+  
+  </script>
+
+
+<body>
+<main role="main" class="container">
+
+    <!-- <div class="border-bottom mt-5 mb-5">    
+    </div> -->
+    
+    <% if (total == 0) { %>
+      <h1>カートに商品がありません</h1>
+    <% } %>
+    
+    
+    
+    <% if (total != 0) { %>
+      
+    <h1>あなたのカート</h1>
+    <a href="/">買い物に戻る</a>
+      
+    <br><br>
+    <div class="aaaa">
+    <% orderItemResult.forEach(function (item, index) { %>
+      　　
+      
+        <div class="row aaa">
+        
+          <div class="col">
+            <img style="max-height: 6rem;" width="auto" 
+             src="./image/<%= item.item.photoURL %>">
+          </div>
+        
+        
+          <div class="col">
+            <span><%= item.item.name %></span>
+          </div>
+        
+        
+          <div class="col">
+            <form action="/order/change" method="POST" name="myForm">
+              <!-- <span></span> -->
+              <input type="number" class="userQuantity" min="1" max="10" value="<%= item.quantity %>" step="1" required>
+              <input type="hidden" value="<%= index %>">
+              <input type="hidden" name = "itemQuantity" class ="realUserQuantity" value="<%= item.quantity %>">
+              <input type="hidden" name = "orderItemId" value="<%= item._id %>">
+              <!-- &nbsp; -->
+              
+              <!-- <input class="update btn btn-primary" type="submit" value="更新"> -->
+              <button class="update btn btn-primary" >更新</button>
+              
+              
+            </form>
+          </div>
+        
+          <div class="col">
+            <span><%= item.item.price.toLocaleString() %>円</span>
+          </div>
+        
+          <div class="col">
+            <form action="/order/change" method="POST">    
+              <input type="hidden" name = "orderItemId" value="<%= item._id %>">
+              <button class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;">✖</button> 
+            </form>
+          </div>
+      
+        </div>
+      
+      
+
+      
+
+    <% }); %>
+  </div>
+    <% } %>
+
+
+    
+    
+    <% if ( user ) { %>
+    <% if ( total != 0 ) { %>
+    <div class="row float-right">
+      <div class="col">
+        <span>合計金額</span>
+        <span><%= total.toLocaleString() %></span>円
+        <!-- <div class="col"> -->
+      </div>
+        <div class="col">
+        <form action="/order/confirm" method="POST">
+          <input type="hidden" name="orderItemResult" value="<%= orderItemResult %>">
+          <input type="submit" class="btn btn-primary" value="ご購入手続きへ">
+        </form>
+      </div>
+      </div>
+    </div>
+    
+    <% } %>
+    <% } %>
+
+
+
+</main>
+</body>
+
+
+</html>

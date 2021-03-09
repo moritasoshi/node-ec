@@ -1,26 +1,45 @@
 version: "3"
 services:
-  mongod001:
-    container_name: mongo-0
-    image: mongo:4.0.5
-    command: mongod --replSet rs0
+  mongo1:
+    restart: always
+    image: mongo
+    container_name: mongo1
+    hostname: mongo1
+    volumes:
+      - /var/www/data/mongo1
+    networks:
+      - default
+      - mongo_link
+    command: --replSet rs0
     ports:
       - "30001:27017"
-  mongod002:
-    container_name: mongo-1
-    image: mongo:4.0.5
-    command: mongod --replSet rs0
+  mongo2:
+    restart: always
+    image: mongo
+    container_name: mongo2
+    hostname: mongo2
+    volumes:
+      - /var/www/data/mongo2
+    networks:
+      - default
+      - mongo_link
+    command: --replSet rs0
     ports:
       - "30002:27017"
-  mongod003:
-    container_name: mongo-2
-    image: mongo:4.0.5
-    command: mongod --replSet rs0
+  mongo3:
+    restart: always
+    image: mongo
+    container_name: mongo3
+    hostname: mongo3
+    volumes:
+      - /var/www/data/mongo3
+    networks:
+      - default
+      - mongo_link
+    command: --replSet rs0
     ports:
       - "30003:27017"
-#  mongoa001:
-#    container_name: mongoa001
-#    image: mongo:4.0.5
-#    command: mongod --replSet rs0
-#    ports:
-#      - "30004:27017"
+
+networks:
+  mongo_link:
+    external: true

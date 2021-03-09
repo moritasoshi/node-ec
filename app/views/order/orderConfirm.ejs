@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/css/nodec.css">
+
+    
+</head>
+
+<body>
+
+  
+
+<main role="main" class="container">
+
+
+    <div class="row">
+      <div class="col"><strong>注文確認</strong></div>
+    </div><br>
+    
+    <form method="POST" action="/order/determine">
+    <div class="row">
+      <% orderItemResult.forEach(function (item, index) { %> 
+      <div class="col">
+        <img style="max-height: 3rem;" width="auto" 
+             src="/image/<%= item.item.photoURL %>"><br>
+        <span><%= item.item.name %></span><br>
+        <span><%= item.item.price %>円</span>
+        <span>×<%= item.quantity %></span>
+      </div>
+      <% }); %>
+      <div class="col">
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col"><br><br></div>
+    </div>
+    
+    <strong>送付先住所</strong><br><br>
+    <div class="row">
+      <div class="col">
+        <% if (address == 0){ %>
+          <div><strong><u> 購入には送付先住所の登録が必要です </u></strong></div><br>
+          <a href="/account/address/register" class="btn btn-primary">住所を登録する</a>
+          <!-- <input type="submit" value="注文を確定する" class="btn btn-primary"> -->
+        <% } else { %>  
+        <% address.forEach(function (item, index) {%> 
+        <% const isDefault = defaultAddress == item.id ? "checked" : "" %>
+        <label>
+        <input class="radio-plain" type="radio" name="address" id="" value="<%= item.id %>" <%= isDefault %> required>
+        <span>&nbsp;&nbsp;&nbsp;〒<%= item.zipCode %></span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><%= item.address %></span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><%= item.lastName + item.firstName %></span><br>
+        </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <% }) %>
+        <% } %>
+
+        
+      </div>
+      
+      <div class="col">
+        <div>小計 :               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= subTotal %>&nbsp;&nbsp;円</div>
+        <span>税金 :              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= tax.toLocaleString() %>&nbsp;&nbsp;&nbsp;円</span>
+        <hr>
+        <div>合計金額 :           &nbsp;&nbsp;&nbsp;&nbsp;<%= total.toLocaleString() %>&nbsp;&nbsp;円</div>
+        <input type="hidden" name="subTotal" value="<%= subTotal %>">
+        <input type="hidden" name="tax" value="<%= tax %>">
+        <input type="hidden" name="total" value="<%= total %>">
+      </div>
+    </div>
+    <br>
+    
+    
+    <!-- <div class="row">
+      <div class="col">
+        <a href="/">他の連絡先を選択</a>
+      </div>
+    </div> -->
+    
+    <div class="row">
+      <div class="col"><br><br></div>
+    </div>
+      
+    <div class="row">
+      <div class="col"><strong>支払い方法の選択</strong></div>
+    </div>
+    <br>
+
+    <div class="row">
+      <div class="col">
+        <input type="radio" id='credit' name="pay" value="0" required>
+        <label for="credit">クレジットカード</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <input type="radio" id='cash' name="pay" value="1" required>
+        <label for="cash">代金引換</label>
+      </div>
+      <% if (address == 0) { %>
+      <% } else { %>
+      <div class="col">
+        <input type="submit" value="注文を確定する" class="btn btn-primary">
+      </div>
+      <% } %>
+    </div>
+    
+    </form>
+  
+
+    
+
+</main>
+</body>
+</html>

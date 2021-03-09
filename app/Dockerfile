@@ -3,7 +3,7 @@ FROM node:12-alpine
 COPY . /home/node/webapp
 
 RUN cd /home/node/webapp; \
-    yarn install;
+    npm install;
 
 EXPOSE 3000
 

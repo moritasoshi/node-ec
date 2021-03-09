@@ -1,0 +1,45 @@
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 80px;
+    background-color: #f5f5f5;
+    border-bottom: #0b2e13 1px;
+    border-top: #0b2e13 3px;
+}
+
+body > .container {
+    padding: 30px 15px;
+}
+
+.container .text-muted {
+    /*margin: 20px 0;*/
+}
+
+.footer > .container {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+p.abridgement {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.update {
+  display: none;
+  left: 110px;
+  height: 40px;
+  top: -35px;
+  position: relative;
+}
+
+.radio-plain {
+  /* width: 20px; */
+  height: 20px;
+  top: 30px;
+  position: relative;
+}

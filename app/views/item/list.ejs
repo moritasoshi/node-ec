@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/css/nodec.css">
+
+</head>
+
+<body>
+
+<main role="main" class="container">
+
+    <% var items = locals.itemList || []; %>
+    <% var categories = locals.categoryList || []; %>
+    <% var orgs = locals.originals || []; %>
+
+    <form>
+        <div class="form-row">
+            <div class="form-group col-7">
+                <input type="text" class="form-control" name="name"
+                       value="<%= orgs.name %>"
+                       placeholder="全ての商品を検索">
+            </div>
+            <div class="form-group col-2">
+                <select class="form-control" id="exampleFormControlSelect1" name="category">
+                    <option value="">--カテゴリ--</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category %>" <%= orgs.category === category ? "selected" : "" %>><%= category %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="form-group col-2">
+                <select class="form-control" id="exampleFormControlSelect1" name="order">
+                    <option value="">--並び替え--</option>
+                    <option value="1" <%= orgs.order === "1" ? "selected" : "" %>>新着順</option>
+                    <option value="2" <%= orgs.order === "2" ? "selected" : "" %>>価格が安い順</option>
+                    <option value="3" <%= orgs.order === "3" ? "selected" : "" %>>価格が高い順</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mb-4">検索</button>
+        </div>
+    </form>
+    <% items.forEach(function (item, index) { %>
+        <% if(index % 4 === 0) { %>
+        <div class="row mb-3">
+            <% } %>
+            <div class="col-3">
+                <div class="card text-center" style="width: 12rem; height: 24rem;">
+                    <a href="/item/<%= item._id %>">
+                        <img alt="Card image cap" class="card-img-top embed-responsive-item"
+                             style="max-height: 16rem;" width="auto"
+                             src="./image/<%= item.photoURL %>"/>
+                    </a>
+                    <div class="card-body" style="height: 8rem;">
+                        <h5 class="card-title">¥<%= item.price.toLocaleString() %></h5>
+                        <p class="abridgement"><a href="/item/<%= item._id %>"><%= item.name %></a></p>
+                    </div>
+                </div>
+            </div>
+            <% if(index % 4 === 3 || index === items.length -1) { %>
+        </div>
+        <% } %>
+    <% }); %>
+    <div class="mx-auto" style="width: 200px;">
+        <% const name = orgs.name || "" %>
+        <% const category = orgs.category || "" %>
+        <% const order = orgs.order || "" %>
+        <% const isActive = function (page){ %>
+            <% if (page == currentPage) return "active" %>
+            <% return "" %>
+        <% } %>
+        <% const previous = `?name=${name}&category=${category}&order=${order}&page=${currentPage - 1}` %>
+        <% const next = `?name=${name}&category=${category}&order=${order}&page=${currentPage + 1}` %>
+
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="/<%= previous %>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <% for(let step = 1; step <= totalPage; step++){ %>
+                    <% const to = `?name=${name}&category=${category}&order=${order}&page=${step}` %>
+                    <li class="page-item <%= isActive(step) %>"><a class="page-link" href="<%= to %>"><%= step %></a>
+                    </li>
+                <% } %>
+                <li class="page-item">
+                    <a class="page-link" href="/<%= next %>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</main>
+
+</body>
+
+</html>
